@@ -37,12 +37,31 @@ export interface ReviewSubmitRespVO {
   xpGained?: number
 }
 
+export interface QuizSubmitReqVO {
+  skillId: number
+  chatId?: number
+  question: string
+  referenceAnswer: string
+  userAnswer: string
+}
+
+export interface QuizSubmitRespVO {
+  correct?: boolean
+  score?: number
+  feedback?: string
+  xpGained?: number
+  mastery?: number
+  totalXp?: number
+  levelNo?: number
+}
+
 export interface ReportVO {
   title?: string
   summary?: string
   strongPoints?: string[]
   weakPoints?: string[]
   nextPlan?: string[]
+  riskReminder?: string
 }
 
 export const getSummary = (): Promise<LearningFlowSummaryVO> => {
@@ -55,6 +74,10 @@ export const getTodayReviews = (): Promise<KnowledgePointVO[]> => {
 
 export const submitReview = (data: { knowledgePointId: number; remembered: boolean }): Promise<ReviewSubmitRespVO> => {
   return request.post({ url: '/aistudy/review/submit', data })
+}
+
+export const submitQuiz = (data: QuizSubmitReqVO): Promise<QuizSubmitRespVO> => {
+  return request.post({ url: '/aistudy/quiz/submit', data })
 }
 
 export const getProfile = (): Promise<LearningProfileVO> => {

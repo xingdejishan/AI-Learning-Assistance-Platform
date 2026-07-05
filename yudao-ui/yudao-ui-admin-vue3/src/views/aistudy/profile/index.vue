@@ -25,6 +25,7 @@
             <el-descriptions-item label="优势">{{ (report.strongPoints || []).join('；') }}</el-descriptions-item>
             <el-descriptions-item label="待提升">{{ (report.weakPoints || []).join('；') }}</el-descriptions-item>
             <el-descriptions-item label="下一步">{{ (report.nextPlan || []).join('；') }}</el-descriptions-item>
+            <el-descriptions-item label="风险提醒">{{ report.riskReminder || '暂无明显风险' }}</el-descriptions-item>
           </el-descriptions>
         </div>
       </ContentWrap>

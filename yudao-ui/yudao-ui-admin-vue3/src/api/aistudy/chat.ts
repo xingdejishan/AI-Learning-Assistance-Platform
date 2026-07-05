@@ -16,6 +16,8 @@ export interface ChatRecordVO {
   }
   mastery?: number
   xpGained?: number
+  totalXp?: number
+  levelNo?: number
   nextSuggestion?: string
   createTime?: string
 }

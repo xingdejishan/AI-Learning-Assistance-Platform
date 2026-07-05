@@ -29,5 +29,9 @@ public class AiChatRespVO {
 
     private Integer xpGained;
 
+    private Integer totalXp;
+
+    private Integer levelNo;
+
     private String nextSuggestion;
 }

@@ -34,6 +34,30 @@ sql/mysql                          数据库脚本
 
 ## Dify Chatflow 输出格式
 
+## Dify 配置
+
+后端读取的配置位于 `yudao-server/src/main/resources/application-local.yaml`：
+
+```yaml
+aistudy:
+  dify:
+    base-url: ${DIFY_BASE_URL:https://api.dify.ai/v1}
+    chat-api-key: ${DIFY_CHAT_API_KEY:}
+    response-mode: blocking
+    timeout-seconds: 60
+```
+
+Windows PowerShell 配置方式：
+
+```powershell
+[Environment]::SetEnvironmentVariable("DIFY_CHAT_API_KEY", "app-你的Key", "User")
+[Environment]::SetEnvironmentVariable("DIFY_BASE_URL", "https://api.dify.ai/v1", "User")
+```
+
+如果使用本地 Dify，把 `DIFY_BASE_URL` 改成本地地址，例如 `http://127.0.0.1:8088/v1`。
+
+未配置 `DIFY_CHAT_API_KEY` 时，后端会返回 AI 服务不可用错误；配置 `DIFY_BASE_URL` 和 `DIFY_CHAT_API_KEY` 后，会真实调用 Dify Chatflow。
+
 Dify 的最终回答建议返回 JSON 字符串：
 
 ```json
@@ -55,15 +79,19 @@ Dify 的最终回答建议返回 JSON 字符串：
 }
 ```
 
-未配置 Dify 时，本地 `DifyChatflowClient` 会返回同结构的模拟 JSON，方便验证闭环链路。
-
 ## 数据库脚本
 
 按顺序执行：
 
 ```sql
+source sql/mysql/quartz.sql;
+source sql/mysql/ruoyi-vue-pro.sql;
+source sql/mysql/ai_study.sql;
 source sql/mysql/ai_study_learning_flow.sql;
+source sql/mysql/ai_study_tenant_fix.sql;
 source sql/mysql/ai_study_menu.sql;
 ```
 
+`ai_study_learning_flow.sql` 会创建知识点、学习事件、学习画像、导师记忆等学习闭环表。
+`ai_study_tenant_fix.sql` 会补齐 AI 伴学表的租户字段，以及聊天记录里的 Dify 消息与原始响应字段。
 `ai_study_menu.sql` 会重建 AI伴学核心菜单并绑定管理员角色权限，不会删除系统管理和基础设施菜单。

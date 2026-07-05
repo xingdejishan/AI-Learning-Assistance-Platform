@@ -10,11 +10,13 @@ public interface AiLearningFlowService {
 
     DifyLearningResponseDTO parseLearningResponse(String rawResponse);
 
-    void recordChatLearning(Long userId, Long skillId, Long chatId, DifyLearningResponseDTO learningResponse, String tutorCode);
+    AiLearningFlowRecordResult recordChatLearning(Long userId, Long skillId, Long chatId, DifyLearningResponseDTO learningResponse, String tutorCode);
 
     List<AiKnowledgePointDO> addKnowledgePoints(Long userId, Long skillId, Long chatId, List<String> points, String tutorCode);
 
     AiReviewSubmitRespVO reviewKnowledgePoint(Long userId, Long knowledgePointId, Boolean remembered);
+
+    AiQuizSubmitRespVO submitQuizAnswer(Long userId, AiQuizSubmitReqVO reqVO);
 
     Integer recomputeSkillMastery(Long userId, Long skillId);
 

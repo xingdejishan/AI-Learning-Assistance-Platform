@@ -47,6 +47,13 @@ public class AiLearningFlowController {
                 reqVO.getKnowledgePointId(), reqVO.getRemembered()));
     }
 
+    @PostMapping("/quiz/submit")
+    @Operation(summary = "提交小测题答案并由 AI 判题")
+    @PreAuthorize("@ss.hasPermission('aistudy:quiz:submit')")
+    public CommonResult<AiQuizSubmitRespVO> submitQuiz(@Valid @RequestBody AiQuizSubmitReqVO reqVO) {
+        return success(aiLearningFlowService.submitQuizAnswer(SecurityFrameworkUtils.getLoginUserId(), reqVO));
+    }
+
     @GetMapping("/profile")
     @Operation(summary = "学习画像")
     @PreAuthorize("@ss.hasPermission('aistudy:profile:query')")

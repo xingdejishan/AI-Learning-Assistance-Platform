@@ -206,7 +206,7 @@ public class AiStudyService {
                 .modelName("dify-chatflow")
                 .build();
         chatRecordMapper.insert(record);
-        aiLearningFlowService.recordChatLearning(userId, reqVO.getSkillId(), record.getId(), learning, reqVO.getTutorCode());
+        AiLearningFlowRecordResult recordResult = aiLearningFlowService.recordChatLearning(userId, reqVO.getSkillId(), record.getId(), learning, reqVO.getTutorCode());
 
         AiChatRespVO respVO = BeanUtils.toBean(record, AiChatRespVO.class);
         respVO.setId(record.getId());
@@ -214,10 +214,10 @@ public class AiStudyService {
         respVO.setKnowledgePoints(learning.getKnowledgePoints());
         respVO.setQuiz(learning.getQuiz());
         respVO.setNextSuggestion(learning.getNextSuggestion());
-        respVO.setXpGained(5);
-        if (reqVO.getSkillId() != null) {
-            respVO.setMastery(aiLearningFlowService.recomputeSkillMastery(userId, reqVO.getSkillId()));
-        }
+        respVO.setXpGained(recordResult.getXpGained());
+        respVO.setTotalXp(recordResult.getTotalXp());
+        respVO.setLevelNo(recordResult.getLevelNo());
+        respVO.setMastery(recordResult.getMastery());
         return respVO;
     }
 

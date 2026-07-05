@@ -22,6 +22,29 @@
               <template #header>小测题</template>
               <div>{{ quiz.question }}</div>
               <div v-if="quiz.answer" class="quiz-answer">参考答案：{{ quiz.answer }}</div>
+              <el-input
+                v-model="quizAnswer"
+                class="mt-12px"
+                type="textarea"
+                :rows="3"
+                placeholder="请输入你的答案"
+              />
+              <el-button class="mt-12px" type="primary" :loading="quizSubmitting" @click="handleSubmitQuiz">
+                提交并由 AI 判题
+              </el-button>
+              <el-alert
+                v-if="quizResult"
+                class="mt-12px"
+                :title="quizResult.correct ? '回答正确' : '还需要复习'"
+                :type="quizResult.correct ? 'success' : 'warning'"
+                show-icon
+                :closable="false"
+              >
+                <div>得分：{{ quizResult.score }}</div>
+                <div>反馈：{{ quizResult.feedback }}</div>
+                <div>XP：+{{ quizResult.xpGained || 0 }}</div>
+                <div>最新掌握度：{{ quizResult.mastery || 0 }}%</div>
+              </el-alert>
             </el-card>
           </div>
           <el-empty v-else description="输入学习或求职问题，AI 会沉淀知识点并生成复习任务" />
@@ -60,6 +83,7 @@
 
 <script setup lang="ts">
 import * as ChatApi from '@/api/aistudy/chat'
+import * as LearningFlowApi from '@/api/aistudy/learningFlow'
 import * as SkillApi from '@/api/aistudy/skill'
 
 defineOptions({ name: 'AiStudyChat' })
@@ -76,8 +100,12 @@ const xpGained = ref<number>()
 const nextSuggestion = ref('')
 const knowledgePoints = ref<string[]>([])
 const quiz = ref<ChatApi.ChatRecordVO['quiz']>()
+const quizAnswer = ref('')
+const quizResult = ref<LearningFlowApi.QuizSubmitRespVO>()
+const quizSubmitting = ref(false)
 const history = ref<ChatApi.ChatRecordVO[]>([])
 const skillOptions = ref<SkillApi.SkillVO[]>([])
+const currentChatId = ref<number>()
 
 const flattenSkills = (items: SkillApi.SkillVO[]): SkillApi.SkillVO[] => {
   return items.flatMap((item) => [item, ...flattenSkills(item.children || [])])
@@ -105,9 +133,12 @@ const sendQuestion = async () => {
     })
     currentQuestion.value = data.question
     currentAnswer.value = data.answer || ''
+    currentChatId.value = data.id
     conversationId.value = data.conversationId || ''
     knowledgePoints.value = data.knowledgePoints || []
     quiz.value = data.quiz
+    quizAnswer.value = ''
+    quizResult.value = undefined
     mastery.value = data.mastery
     xpGained.value = data.xpGained
     nextSuggestion.value = data.nextSuggestion || ''
@@ -115,6 +146,32 @@ const sendQuestion = async () => {
     await loadHistory()
   } finally {
     sending.value = false
+  }
+}
+
+const handleSubmitQuiz = async () => {
+  if (!skillId.value || !quiz.value?.question || !quiz.value?.answer) {
+    message.warning('当前小测题信息不完整')
+    return
+  }
+  if (!quizAnswer.value.trim()) {
+    message.warning('请先填写你的答案')
+    return
+  }
+  quizSubmitting.value = true
+  try {
+    quizResult.value = await LearningFlowApi.submitQuiz({
+      skillId: skillId.value,
+      chatId: currentChatId.value,
+      question: quiz.value.question,
+      referenceAnswer: quiz.value.answer,
+      userAnswer: quizAnswer.value
+    })
+    mastery.value = quizResult.value.mastery
+    xpGained.value = quizResult.value.xpGained
+    message.success(quizResult.value.correct ? '回答正确' : '回答还需改进')
+  } finally {
+    quizSubmitting.value = false
   }
 }
 
