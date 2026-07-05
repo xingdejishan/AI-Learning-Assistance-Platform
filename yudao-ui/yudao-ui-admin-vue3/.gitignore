@@ -1,0 +1,12 @@
+node_modules
+.DS_Store
+.env.local
+dist
+dist-ssr
+/dist*
+pnpm-debug
+auto-*.d.ts
+.idea
+.history
+output/
+.playwright-cli/
