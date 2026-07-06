@@ -218,11 +218,11 @@ const itemRefs = useTemplateRefsList<ComponentRef<typeof ContextMenu & ContextMe
 // 右键菜单状态改变的时候
 const visibleChange = (visible: boolean, tagItem: RouteLocationNormalizedLoaded) => {
   if (visible) {
+    setSelectTag(tagItem)
     for (const v of unref(itemRefs)) {
       const elDropdownMenuRef = v.elDropdownMenuRef
       if (tagItem.fullPath !== v.tagItem.fullPath) {
         elDropdownMenuRef?.handleClose()
-        setSelectTag(tagItem)
       }
     }
   }
@@ -279,17 +279,6 @@ watch(
     :class="prefixCls"
     class="relative w-full flex bg-[#fff] dark:bg-[var(--el-bg-color)]"
   >
-    <span
-      :class="tagsViewImmerse ? '' : `${prefixCls}__tool ${prefixCls}__tool--first`"
-      class="h-[var(--tags-view-height)] w-[var(--tags-view-height)] flex cursor-pointer items-center justify-center"
-      @click="move(-200)"
-    >
-      <Icon
-        :hover-color="isDark ? '#fff' : 'var(--el-color-black)'"
-        color="var(--el-text-color-placeholder)"
-        icon="ep:d-arrow-left"
-      />
-    </span>
     <div class="flex-1 overflow-hidden">
       <ElScrollbar ref="scrollbarRef" class="h-full" @scroll="scroll">
         <div class="h-[var(--tags-view-height)] flex">
@@ -323,29 +312,6 @@ watch(
                 disabled: !!visitedViews?.length && selectedTag?.meta.affix,
                 command: () => {
                   closeSelectedTag(item)
-                }
-              },
-              {
-                divided: true,
-                icon: 'ep:d-arrow-left',
-                label: t('common.closeTheLeftTab'),
-                disabled:
-                  !!visitedViews?.length &&
-                  (item.fullPath === visitedViews[0].fullPath ||
-                    selectedTag?.fullPath !== item.fullPath),
-                command: () => {
-                  closeLeftTags()
-                }
-              },
-              {
-                icon: 'ep:d-arrow-right',
-                label: t('common.closeTheRightTab'),
-                disabled:
-                  !!visitedViews?.length &&
-                  (item.fullPath === visitedViews[visitedViews.length - 1].fullPath ||
-                    selectedTag?.fullPath !== item.fullPath),
-                command: () => {
-                  closeRightTags()
                 }
               },
               {
@@ -407,17 +373,6 @@ watch(
     <span
       :class="tagsViewImmerse ? '' : `${prefixCls}__tool`"
       class="h-[var(--tags-view-height)] w-[var(--tags-view-height)] flex cursor-pointer items-center justify-center"
-      @click="move(200)"
-    >
-      <Icon
-        :hover-color="isDark ? '#fff' : 'var(--el-color-black)'"
-        color="var(--el-text-color-placeholder)"
-        icon="ep:d-arrow-right"
-      />
-    </span>
-    <span
-      :class="tagsViewImmerse ? '' : `${prefixCls}__tool`"
-      class="h-[var(--tags-view-height)] w-[var(--tags-view-height)] flex cursor-pointer items-center justify-center"
       @click="refreshSelectedTag(selectedTag)"
     >
       <Icon
@@ -441,25 +396,6 @@ watch(
           disabled: !!visitedViews?.length && selectedTag?.meta.affix,
           command: () => {
             closeSelectedTag(selectedTag!)
-          }
-        },
-        {
-          divided: true,
-          icon: 'ep:d-arrow-left',
-          label: t('common.closeTheLeftTab'),
-          disabled: !!visitedViews?.length && selectedTag?.fullPath === visitedViews[0].fullPath,
-          command: () => {
-            closeLeftTags()
-          }
-        },
-        {
-          icon: 'ep:d-arrow-right',
-          label: t('common.closeTheRightTab'),
-          disabled:
-            !!visitedViews?.length &&
-            selectedTag?.fullPath === visitedViews[visitedViews.length - 1].fullPath,
-          command: () => {
-            closeRightTags()
           }
         },
         {

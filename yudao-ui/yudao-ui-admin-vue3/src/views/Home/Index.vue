@@ -1,10 +1,6 @@
 <template>
   <div class="ai-pixel-home">
     <section class="ai-pixel-hero">
-      <div class="ai-pixel-hero-top">
-        <span class="accent-script">{{ t('aiStudy.hero.badge') }}</span>
-      </div>
-
       <div class="ai-pixel-hero-main">
         <h1 class="ai-pixel-title">
           <span class="matrix-dot-base matrix-white">{{ t('aiStudy.hero.titleLine1') }}</span>
@@ -13,9 +9,6 @@
             <span class="matrix-dot-base matrix-blue">{{ t('aiStudy.hero.titleLine2Right') }}</span>
           </span>
         </h1>
-
-        <p class="ai-pixel-subtitle">{{ t('aiStudy.hero.subtitle') }}</p>
-        <p class="ai-pixel-subtitle-note">{{ t('aiStudy.hero.subtitleNote') }}</p>
       </div>
     </section>
 
@@ -30,7 +23,7 @@
           <span class="ai-pixel-module-code">{{ module.code }}</span>
           <span class="pixel-led"></span>
         </div>
-        <h2 class="ai-pixel-module-title">{{ module.title }}</h2>
+        <h2 v-if="module.title" class="ai-pixel-module-title">{{ module.title }}</h2>
         <p class="ai-pixel-module-desc">{{ module.desc }}</p>
         <div v-for="line in module.meta" :key="line" class="ai-pixel-module-line">{{ line }}</div>
         <div v-if="module.progress" class="ai-pixel-progress-block">{{ module.progress }}</div>
@@ -162,7 +155,7 @@ const moduleCards = computed(() => [
     code: t('aiStudy.hero.pipelineCode'),
     title: t('aiStudy.hero.pipelineTitle'),
     desc: t('aiStudy.hero.pipelineDesc'),
-    meta: [t('aiStudy.hero.pipelineEpoch')],
+    meta: [],
     progress: pixelProgress,
     modifier: 'is-pink'
   },
@@ -289,13 +282,18 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
   textStyle: chartTextStyle(),
   tooltip: { trigger: 'axis', ...chartTooltip() },
   legend: {
+    top: 8,
+    right: 20,
+    itemWidth: 18,
+    itemHeight: 10,
     data: [t('aiStudy.home.aiChats'), t('aiStudy.home.resumeDiagnosis')],
     textStyle: {
-      color: '#64748B',
+      color: '#E2E8F0',
+      fontSize: 12,
       fontFamily: chartFontFamily
     }
   },
-  grid: { left: 20, right: 20, top: 50, bottom: 20, containLabel: true },
+  grid: { left: 48, right: 32, top: 56, bottom: 40, containLabel: true },
   xAxis: {
     type: 'category',
     data: [
@@ -348,8 +346,8 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
 .ai-pixel-hero {
   position: relative;
   overflow: hidden;
-  min-height: 360px;
-  padding: 38px 42px 44px;
+  min-height: auto;
+  padding: 20px 28px 20px;
   background:
     linear-gradient(135deg, rgb(5 7 10 / 94%), rgb(5 7 10 / 80%)),
     linear-gradient(90deg, rgb(0 229 255 / 8%) 1px, transparent 1px),
@@ -388,39 +386,19 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
   opacity: 0.22;
 }
 
-.ai-pixel-hero-top {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.accent-script {
-  display: inline-block;
-  color: #ff8bb2;
-  font-family: Georgia, ui-serif, serif;
-  font-size: clamp(24px, 4vw, 56px);
-  font-style: italic;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-shadow: 0 0 18px rgb(255 139 178 / 25%);
-  transform: rotate(-4deg);
-}
-
 .ai-pixel-hero-main {
   position: relative;
   z-index: 1;
   max-width: 1120px;
-  margin-top: 12px;
 }
 
 .ai-pixel-title {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   margin: 0;
   font-family: 'Arial Black', Impact, ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(48px, 8vw, 118px);
+  font-size: clamp(48px, 8vw, 120px);
   font-weight: 900;
   line-height: 0.95;
 }
@@ -453,24 +431,6 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
 
 .matrix-blue {
   background-image: radial-gradient(circle, #00e5ff 35%, transparent 40%);
-}
-
-.ai-pixel-subtitle {
-  max-width: 860px;
-  margin: 28px 0 0;
-  color: #e2e8f0;
-  font-family: ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(16px, 2vw, 24px);
-  font-weight: 700;
-  line-height: 1.8;
-  text-shadow: 0 0 12px rgb(0 229 255 / 15%);
-}
-
-.ai-pixel-subtitle-note {
-  margin: 10px 0 0;
-  color: #64748b;
-  font-size: clamp(12px, 1.4vw, 16px);
-  line-height: 1.8;
 }
 
 .ai-pixel-grid {
@@ -746,8 +706,7 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
   }
 
   .ai-pixel-hero {
-    min-height: 320px;
-    padding: 30px 24px 34px;
+    padding: 16px 20px 16px;
   }
 
   .ai-pixel-title-row {

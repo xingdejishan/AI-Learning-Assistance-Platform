@@ -70,11 +70,19 @@
       <!-- 登录按钮 / 返回按钮 -->
       <el-col :span="24" class="px-10px">
         <el-form-item>
-          <el-button :loading="loginLoading" class="w-full" type="primary" @click="signIn()">
+          <el-button :loading="loginLoading" class="w-full" type="primary" @click="getCode()">
             {{ t('login.login') }}
           </el-button>
         </el-form-item>
       </el-col>
+      <Verify
+        v-if="loginData.captchaEnable === 'true'"
+        ref="verify"
+        :captchaType="captchaType"
+        :imgSize="{ width: '400px', height: '200px' }"
+        mode="pop"
+        @success="signIn"
+      />
       <el-col :span="24" class="px-10px">
         <el-form-item>
           <el-button :loading="loginLoading" class="w-full" @click="handleBackLogin()">
@@ -96,6 +104,7 @@ import { getTenantIdByName, sendSmsCode, smsLogin } from '@/api/login'
 import LoginFormTitle from './LoginFormTitle.vue'
 import { LoginStateEnum, useFormValid, useLoginState } from './useLogin'
 import { ElLoading } from 'element-plus'
+import { Verify } from '@/components/Verifition'
 
 defineOptions({ name: 'MobileForm' })
 
@@ -119,6 +128,7 @@ const rules = {
 }
 const loginData = reactive({
   codeImg: '',
+  captchaEnable: import.meta.env.VITE_APP_CAPTCHA_ENABLE,
   tenantEnable: import.meta.env.VITE_APP_TENANT_ENABLE,
   token: '',
   loading: {
@@ -143,8 +153,14 @@ const smsVO = reactive({
 })
 const mobileCodeTimer = ref(0)
 const redirect = ref<string>('')
+const verify = ref()
+const captchaType = ref('blockPuzzle')
 const getSmsCode = async () => {
   await getTenantId()
+  if (!loginData.loginForm.mobileNumber) {
+    message.warning('请输入手机号码')
+    return
+  }
   smsVO.smsCode.mobile = loginData.loginForm.mobileNumber
   await sendSmsCode(smsVO.smsCode).then(async () => {
     message.success(t('login.SmsSendMsg'))
@@ -156,7 +172,17 @@ const getSmsCode = async () => {
         clearInterval(msgTimer)
       }
     }, 1000)
+  }).catch(() => {
+    // SMS send failed, error already handled by interceptor
   })
+}
+
+const getCode = () => {
+  if (loginData.captchaEnable === 'false') {
+    signIn()
+  } else {
+    verify.value.show()
+  }
 }
 watch(
   () => currentRoute.value,
