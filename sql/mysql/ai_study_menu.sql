@@ -34,7 +34,7 @@ INSERT INTO system_menu
   (id, name, permission, type, sort, parent_id, path, icon, component, component_name,
    status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
 VALUES
-  (1300, 'AI伴学核心', '', 1, 30, 0, '/aistudy', 'ep:reading', NULL, NULL,
+  (1300, 'AI助学系统', '', 1, 1, 0, '/aistudy', 'ep:reading', NULL, NULL,
    0, b'1', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0'),
   (1301, '技能树管理', 'aistudy:skill:query', 2, 1, 1300, 'skill', 'ep:connection', 'aistudy/skill/index', 'AiStudySkill',
    0, b'1', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0'),
