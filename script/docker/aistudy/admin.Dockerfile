@@ -5,6 +5,7 @@ COPY yudao-ui/yudao-ui-admin-vue3 ./yudao-ui/yudao-ui-admin-vue3
 COPY script/docker/aistudy/admin/.env.prod ./yudao-ui/yudao-ui-admin-vue3/.env.prod
 
 WORKDIR /workspace/yudao-ui/yudao-ui-admin-vue3
+ENV COREPACK_NPM_REGISTRY=https://registry.npmmirror.com
 RUN corepack enable \
   && corepack prepare pnpm@11.7.0 --activate \
   && pnpm config set registry https://registry.npmmirror.com \
