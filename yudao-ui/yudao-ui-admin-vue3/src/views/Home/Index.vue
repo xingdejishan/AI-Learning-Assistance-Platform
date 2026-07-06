@@ -37,32 +37,44 @@
 
     <el-row :gutter="12" class="mt-12px">
       <el-col :xl="16" :lg="16" :md="24" :sm="24" :xs="24">
-        <el-card shadow="never">
-          <template #header>
-            <span>{{ t('aiStudy.home.studyTrend') }}</span>
-          </template>
-          <Echart :height="320" :options="studyTrendOptions" />
-        </el-card>
+        <div class="dashboard-chart-card">
+          <div class="dashboard-chart-header">
+            <span class="dashboard-chart-marker"></span>
+            <span class="dashboard-chart-title">{{ t('aiStudy.home.studyTrend') }}</span>
+          </div>
+
+          <div class="dashboard-chart-body">
+            <Echart class="dashboard-chart" height="100%" :options="studyTrendOptions" />
+          </div>
+        </div>
       </el-col>
 
       <el-col :xl="8" :lg="8" :md="24" :sm="24" :xs="24" class="lt-lg:mt-12px">
-        <el-card shadow="never">
-          <template #header>
-            <span>{{ t('aiStudy.home.skillDistribution') }}</span>
-          </template>
-          <Echart :height="320" :options="skillDistributionOptions" />
-        </el-card>
+        <div class="dashboard-chart-card">
+          <div class="dashboard-chart-header">
+            <span class="dashboard-chart-marker"></span>
+            <span class="dashboard-chart-title">{{ t('aiStudy.home.skillDistribution') }}</span>
+          </div>
+
+          <div class="dashboard-chart-body">
+            <Echart class="dashboard-chart" height="100%" :options="skillDistributionOptions" />
+          </div>
+        </div>
       </el-col>
     </el-row>
 
     <el-row :gutter="12" class="mt-12px">
       <el-col :span="24">
-        <el-card shadow="never">
-          <template #header>
-            <span>{{ t('aiStudy.home.aiResumeStats') }}</span>
-          </template>
-          <Echart :height="320" :options="aiSupportOptions" />
-        </el-card>
+        <div class="dashboard-chart-card">
+          <div class="dashboard-chart-header">
+            <span class="dashboard-chart-marker"></span>
+            <span class="dashboard-chart-title">{{ t('aiStudy.home.aiResumeStats') }}</span>
+          </div>
+
+          <div class="dashboard-chart-body">
+            <Echart class="dashboard-chart" height="100%" :options="aiSupportOptions" />
+          </div>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -294,5 +306,86 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
   font-weight: 700;
   color: var(--app-text);
   text-shadow: var(--app-pixel-shadow);
+}
+
+.dashboard-chart-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 308px;
+  background:
+    linear-gradient(135deg, rgb(122 162 255 / 8%), rgb(255 183 220 / 5%)),
+    var(--app-card-bg);
+  border: 1px solid var(--app-border-strong, var(--app-border));
+  box-shadow:
+    var(--app-pixel-shadow),
+    0 12px 26px rgb(0 0 0 / 22%);
+}
+
+.dashboard-chart-card::after {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  width: 76px;
+  height: 76px;
+  pointer-events: none;
+  content: '';
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 5%) 1px, transparent 1px),
+    linear-gradient(rgb(255 255 255 / 5%) 1px, transparent 1px);
+  background-size: 10px 10px;
+  opacity: 0.3;
+}
+
+.dashboard-chart-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  height: 48px;
+  min-height: 48px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--app-border, #2b3548);
+  background: rgb(8 13 20 / 72%);
+}
+
+.dashboard-chart-marker {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  background: var(--app-accent, #ffb7dc);
+  box-shadow: 0 0 8px rgb(255 183 220 / 70%);
+}
+
+.dashboard-chart-title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--app-text, #f5f7ff);
+  font-family: var(--app-pixel-font);
+  font-size: var(--app-title-font-size, 18px);
+  font-weight: 700;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-chart-body {
+  position: relative;
+  z-index: 1;
+  height: 260px;
+  padding: 12px 20px 20px;
+  overflow: hidden;
+}
+
+.dashboard-chart {
+  position: relative;
+  z-index: 1;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.dashboard-chart-body :deep(canvas) {
+  max-width: 100%;
+  max-height: 100%;
 }
 </style>
