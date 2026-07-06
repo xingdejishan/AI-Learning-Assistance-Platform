@@ -63,6 +63,21 @@ public interface AdminAuthService {
     AuthLoginRespVO socialLogin(@Valid AuthSocialLoginReqVO reqVO);
 
     /**
+     * 邮箱验证码发送
+     *
+     * @param reqVO 发送请求
+     */
+    void sendEmailCode(AuthEmailSendReqVO reqVO);
+
+    /**
+     * 邮箱验证码登录
+     *
+     * @param reqVO 登录信息
+     * @return 登录结果
+     */
+    AuthLoginRespVO emailLogin(AuthEmailLoginReqVO reqVO);
+
+    /**
      * 刷新访问令牌
      *
      * @param refreshToken 刷新令牌

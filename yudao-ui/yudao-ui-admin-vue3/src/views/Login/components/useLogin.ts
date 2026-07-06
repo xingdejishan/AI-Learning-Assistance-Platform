@@ -5,6 +5,7 @@ export enum LoginStateEnum {
   REGISTER,
   RESET_PASSWORD,
   MOBILE,
+  EMAIL,
   QR_CODE,
   SSO
 }

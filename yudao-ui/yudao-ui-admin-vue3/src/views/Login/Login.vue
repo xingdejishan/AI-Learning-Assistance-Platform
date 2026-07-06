@@ -7,11 +7,9 @@
       <div
         :class="`${prefixCls}__left flex-1 bg-gray-500 bg-opacity-20 relative p-30px lt-xl:hidden overflow-x-hidden overflow-y-auto`"
       >
-        <!-- 左上角系统标题 -->
         <div class="relative h-48px flex items-center text-white">
           <span class="text-20px font-bold">{{ t('login.platformName') }}</span>
         </div>
-        <!-- 左边的背景图 + 欢迎语 -->
         <div class="h-[calc(100%-60px)] flex items-center justify-center">
           <TransitionGroup
             appear
@@ -30,7 +28,6 @@
       <div
         class="relative flex-1 p-30px dark:bg-[var(--login-bg-color)] lt-sm:p-10px overflow-x-hidden overflow-y-auto"
       >
-        <!-- 右侧登录区工具栏 -->
         <div
           class="login-right-header flex items-center gap-16px"
           style="color: var(--el-text-color-primary)"
@@ -55,20 +52,15 @@
             <LocaleDropdown />
           </div>
         </div>
-        <!-- 右边的登录界面 -->
         <Transition appear enter-active-class="animate__animated animate__bounceInRight">
           <div
             class="m-auto h-[calc(100%-60px)] w-[100%] flex items-center at-2xl:max-w-500px at-lg:max-w-500px at-md:max-w-500px at-xl:max-w-500px"
           >
-            <!-- 账号登录 -->
             <LoginForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
-            <!-- 手机登录 -->
             <MobileForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
-            <!-- 注册 -->
+            <EmailForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
             <RegisterForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
-            <!-- 三方登录 -->
             <SSOLoginVue class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
-            <!-- 忘记密码 -->
             <ForgetPasswordForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
           </div>
         </Transition>
@@ -86,7 +78,7 @@ import {
   MIN_BRIGHTNESS
 } from '@/utils/brightness'
 
-import { LoginForm, MobileForm, RegisterForm, SSOLoginVue, ForgetPasswordForm } from './components'
+import { LoginForm, MobileForm, EmailForm, RegisterForm, SSOLoginVue, ForgetPasswordForm } from './components'
 
 defineOptions({ name: 'Login' })
 

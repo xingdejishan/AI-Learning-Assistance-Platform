@@ -173,4 +173,21 @@ public class AuthController {
         return success(authService.socialLogin(reqVO));
     }
 
+    // ========== 邮箱登录相关 ==========
+
+    @PostMapping("/send-email-code")
+    @PermitAll
+    @Operation(summary = "发送邮箱验证码")
+    public CommonResult<Boolean> sendEmailCode(@RequestBody @Valid AuthEmailSendReqVO reqVO) {
+        authService.sendEmailCode(reqVO);
+        return success(true);
+    }
+
+    @PostMapping("/email-login")
+    @PermitAll
+    @Operation(summary = "使用邮箱验证码登录")
+    public CommonResult<AuthLoginRespVO> emailLogin(@RequestBody @Valid AuthEmailLoginReqVO reqVO) {
+        return success(authService.emailLogin(reqVO));
+    }
+
 }

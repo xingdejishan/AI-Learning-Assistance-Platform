@@ -89,3 +89,13 @@ export const reqCheck = (data: any) => {
 export const smsResetPassword = (data: any) => {
   return request.post({ url: '/system/auth/reset-password', data })
 }
+
+// ========== 邮箱登录相关 ==========
+
+export const sendEmailCode = (data: { email: string }) => {
+  return request.post({ url: '/system/auth/send-email-code', data })
+}
+
+export const emailLogin = (data: { email: string; code: string }) => {
+  return request.post({ url: '/system/auth/email-login', data })
+}

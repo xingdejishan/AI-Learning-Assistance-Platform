@@ -69,6 +69,8 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     private CaptchaService captchaService;
     @Resource
     private SmsCodeApi smsCodeApi;
+    @Resource
+    private EmailCodeService emailCodeService;
 
     /**
      * 验证码的开关，默认为 true
@@ -302,5 +304,22 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         );
 
         userService.updateUserPassword(userByMobile.getId(), reqVO.getPassword());
+    }
+
+    @Override
+    public void sendEmailCode(AuthEmailSendReqVO reqVO) {
+        emailCodeService.sendEmailCode(reqVO.getEmail());
+    }
+
+    @Override
+    public AuthLoginRespVO emailLogin(AuthEmailLoginReqVO reqVO) {
+        emailCodeService.validateEmailCode(reqVO.getEmail(), reqVO.getCode());
+
+        AdminUserDO user = userService.getUserByUsername(reqVO.getEmail());
+        if (user == null) {
+            throw exception(USER_NOT_EXISTS);
+        }
+
+        return createTokenAfterLoginSuccess(user.getId(), reqVO.getEmail(), LoginLogTypeEnum.LOGIN_MOBILE);
     }
 }
