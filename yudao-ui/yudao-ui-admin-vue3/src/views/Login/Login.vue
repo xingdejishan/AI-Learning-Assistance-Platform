@@ -19,7 +19,11 @@
             class="login-hero-content"
             tag="div"
           >
-            <img key="1" alt="" class="login-hero-image" src="@/assets/imgs/login-ai-study.png" />
+            <div key="1" class="login-hero-visual">
+              <img alt="" class="login-hero-image" src="@/assets/imgs/login-ai-study.png" />
+            </div>
+            <div key="2" class="login-hero-title">{{ t('login.welcome') }}</div>
+            <div key="3" class="login-hero-message">{{ t('login.message') }}</div>
           </TransitionGroup>
         </div>
       </div>
@@ -155,10 +159,33 @@ $prefix-cls: #{$namespace}-login;
       text-align: center;
     }
 
-    .login-hero-image {
+    .login-hero-visual {
       width: min(100%, 680px);
-      max-height: 78vh;
+      height: min(48vh, 400px);
+      overflow: hidden;
+    }
+
+    .login-hero-image {
+      width: 100%;
+      height: auto;
       object-fit: contain;
+    }
+
+    .login-hero-title {
+      max-width: min(92%, 760px);
+      margin-top: 28px;
+      color: #ffffff;
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.28;
+    }
+
+    .login-hero-message {
+      max-width: min(88%, 700px);
+      margin-top: 16px;
+      color: rgb(255 255 255 / 82%);
+      font-size: 18px;
+      line-height: 1.65;
     }
 
     &::before {
