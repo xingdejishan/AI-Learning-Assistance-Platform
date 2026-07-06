@@ -1,9 +1,9 @@
 <template>
   <el-form
     v-show="getShow"
-    ref="formLogin"
+    ref="formEmailLogin"
     :model="loginData.loginForm"
-    :rules="LoginRules"
+    :rules="rules"
     class="login-form"
     label-position="top"
     label-width="120px"
@@ -15,229 +15,115 @@
           <LoginFormTitle class="w-full" />
         </el-form-item>
       </el-col>
-      <el-col v-if="false" :span="24" class="px-10px">
-        <el-form-item prop="tenantName">
+      <el-col :span="24" class="px-10px">
+        <el-form-item prop="email">
           <el-input
-            v-model="loginData.loginForm.tenantName"
-            :placeholder="t('login.tenantNamePlaceholder')"
-            :prefix-icon="iconHouse"
-            link
-            type="primary"
+            v-model="loginData.loginForm.email"
+            :placeholder="t('login.emailPlaceholder')"
+            :prefix-icon="iconMessage"
           />
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="username">
-          <el-input
-            v-model="loginData.loginForm.username"
-            :placeholder="t('login.usernamePlaceholder')"
-            :prefix-icon="iconAvatar"
-          />
-        </el-form-item>
-      </el-col>
-      <el-col :span="24" class="px-10px">
-        <el-form-item prop="password">
-          <el-input
-            v-model="loginData.loginForm.password"
-            :placeholder="t('login.passwordPlaceholder')"
-            :prefix-icon="iconLock"
-            show-password
-            type="password"
-            @keyup.enter="getCode()"
-          />
-        </el-form-item>
-      </el-col>
-      <el-col :span="24" class="px-10px mt-[-20px] mb-[-20px]">
-        <el-form-item>
-          <el-row justify="space-between" style="width: 100%">
-            <el-col :span="6">
-              <el-checkbox v-model="loginData.loginForm.rememberMe">
-                {{ t('login.remember') }}
-              </el-checkbox>
-            </el-col>
-            <el-col :offset="6" :span="12">
-              <el-link
-                class="float-right"
-                type="primary"
-                @click="setLoginState(LoginStateEnum.RESET_PASSWORD)"
+        <el-form-item prop="code">
+          <el-row :gutter="5" justify="space-between" style="width: 100%">
+            <el-col :span="24">
+              <el-input
+                v-model="loginData.loginForm.code"
+                :placeholder="t('login.codePlaceholder')"
+                :prefix-icon="iconCircleCheck"
               >
-                {{ t('login.forgetPassword') }}
-              </el-link>
+                <template #append>
+                  <span
+                    v-if="emailCodeTimer <= 0"
+                    class="getEmailCode"
+                    style="cursor: pointer"
+                    @click="getEmailCode"
+                  >
+                    {{ t('login.getSmsCode') }}
+                  </span>
+                  <span v-if="emailCodeTimer > 0" class="getEmailCode" style="cursor: pointer">
+                    {{ emailCodeTimer }}秒后可重新获取
+                  </span>
+                </template>
+              </el-input>
             </el-col>
           </el-row>
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
         <el-form-item>
-          <el-button :loading="loginLoading" class="w-full" type="primary" @click="getCode()">
+          <el-button :loading="loginLoading" class="w-full" type="primary" @click="signIn()">
             {{ t('login.login') }}
           </el-button>
         </el-form-item>
       </el-col>
-      <el-col :span="24" class="px-10px mt-[-12px] mb-6px">
-        <div class="w-full text-right">
-          <el-link type="primary" @click="setLoginState(LoginStateEnum.REGISTER)">
-            {{ t('login.registerEntry') }}
-          </el-link>
-        </div>
-      </el-col>
-      <Verify
-        v-if="loginData.captchaEnable === 'true'"
-        ref="verify"
-        :captchaType="captchaType"
-        :imgSize="{ width: '400px', height: '200px' }"
-        mode="pop"
-        @success="handleLogin"
-      />
-      <el-divider content-position="center">{{ t('login.otherLogin') }}</el-divider>
       <el-col :span="24" class="px-10px">
         <el-form-item>
-          <div class="other-login-list">
-            <button
-              class="other-login-item"
-              type="button"
-              @click="setLoginState(LoginStateEnum.MOBILE)"
-            >
-              <Icon icon="ep:iphone" :size="22" />
-              <span>{{ t('login.phoneLogin') }}</span>
-            </button>
-            <button
-              class="other-login-item"
-              type="button"
-              @click="setLoginState(LoginStateEnum.EMAIL)"
-            >
-              <Icon icon="ep:message" :size="22" />
-              <span>{{ t('login.emailLogin') }}</span>
-            </button>
-          </div>
+          <el-button :loading="loginLoading" class="w-full" @click="handleBackLogin()">
+            {{ t('login.backLogin') }}
+          </el-button>
         </el-form-item>
       </el-col>
     </el-row>
   </el-form>
 </template>
 <script lang="ts" setup>
-import { ElLoading } from 'element-plus'
-import LoginFormTitle from './LoginFormTitle.vue'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 
 import { useIcon } from '@/hooks/web/useIcon'
 
-import * as authUtil from '@/utils/auth'
+import { setTenantId, setToken } from '@/utils/auth'
 import { usePermissionStore } from '@/store/modules/permission'
-import * as LoginApi from '@/api/login'
+import { getTenantIdByName, sendEmailCode, emailLogin } from '@/api/login'
+import LoginFormTitle from './LoginFormTitle.vue'
 import { LoginStateEnum, useFormValid, useLoginState } from './useLogin'
 
-defineOptions({ name: 'LoginForm' })
+defineOptions({ name: 'EmailForm' })
 
 const { t } = useI18n()
 const message = useMessage()
-const iconHouse = useIcon({ icon: 'ep:house' })
-const iconAvatar = useIcon({ icon: 'ep:avatar' })
-const iconLock = useIcon({ icon: 'ep:lock' })
-const formLogin = ref()
-const { validForm } = useFormValid(formLogin)
-const { setLoginState, getLoginState } = useLoginState()
-const { currentRoute, push } = useRouter()
 const permissionStore = usePermissionStore()
-const redirect = ref<string>('')
+const { currentRoute, push } = useRouter()
+const formEmailLogin = ref()
 const loginLoading = ref(false)
-const verify = ref()
-const captchaType = ref('blockPuzzle')
+const iconMessage = useIcon({ icon: 'ep:message' })
+const iconCircleCheck = useIcon({ icon: 'ep:circle-check' })
+const { validForm } = useFormValid(formEmailLogin)
+const { handleBackLogin, getLoginState } = useLoginState()
+const getShow = computed(() => unref(getLoginState) === LoginStateEnum.EMAIL)
 
-const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN)
-
-const LoginRules = {
-  tenantName: [required],
-  username: [required],
-  password: [required]
+const rules = {
+  email: [required],
+  code: [required]
 }
 const loginData = reactive({
-  isShowPassword: false,
-  captchaEnable: import.meta.env.VITE_APP_CAPTCHA_ENABLE,
-  tenantEnable: import.meta.env.VITE_APP_TENANT_ENABLE,
   loginForm: {
-    tenantName: import.meta.env.VITE_APP_DEFAULT_LOGIN_TENANT || '',
-    username: import.meta.env.VITE_APP_DEFAULT_LOGIN_USERNAME || '',
-    password: import.meta.env.VITE_APP_DEFAULT_LOGIN_PASSWORD || '',
-    captchaVerification: '',
-    rememberMe: true
+    email: '',
+    code: ''
   }
 })
+const emailCodeTimer = ref(0)
+const redirect = ref<string>('')
 
-const getCode = async () => {
-  if (loginData.captchaEnable === 'false') {
-    await handleLogin({})
-  } else {
-    verify.value.show()
+const getEmailCode = async () => {
+  await getTenantId()
+  if (!loginData.loginForm.email) {
+    message.warning(t('login.emailPlaceholder'))
+    return
   }
+  await sendEmailCode({ email: loginData.loginForm.email }).then(async () => {
+    message.success(t('login.SmsSendMsg'))
+    emailCodeTimer.value = 60
+    const msgTimer = setInterval(() => {
+      emailCodeTimer.value = emailCodeTimer.value - 1
+      if (emailCodeTimer.value <= 0) {
+        clearInterval(msgTimer)
+      }
+    }, 1000)
+  }).catch(() => {})
 }
-const getTenantId = async () => {
-  if (loginData.tenantEnable === 'true') {
-    const res = await LoginApi.getTenantIdByName(loginData.loginForm.tenantName)
-    authUtil.setTenantId(res)
-  }
-}
-const getLoginFormCache = () => {
-  const loginForm = authUtil.getLoginForm()
-  if (loginForm) {
-    loginData.loginForm = {
-      ...loginData.loginForm,
-      username: loginForm.username ? loginForm.username : loginData.loginForm.username,
-      password: loginForm.password ? loginForm.password : loginData.loginForm.password,
-      rememberMe: loginForm.rememberMe,
-      tenantName: import.meta.env.VITE_APP_DEFAULT_LOGIN_TENANT || loginData.loginForm.tenantName
-    }
-  }
-}
-const getTenantByWebsite = async () => {
-  if (loginData.tenantEnable === 'true') {
-    const website = location.host
-    const res = await LoginApi.getTenantByWebsite(website)
-    if (res) {
-      loginData.loginForm.tenantName = res.name
-      authUtil.setTenantId(res.id)
-    }
-  }
-}
-const loading = ref()
-const handleLogin = async (params: any) => {
-  loginLoading.value = true
-  try {
-    await getTenantId()
-    const data = await validForm()
-    if (!data) {
-      return
-    }
-    const loginDataLoginForm = { ...loginData.loginForm }
-    loginDataLoginForm.captchaVerification = params.captchaVerification
-    const res = await LoginApi.login(loginDataLoginForm)
-    if (!res) {
-      return
-    }
-    loading.value = ElLoading.service({
-      lock: true,
-      text: '正在加载系统中...',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
-    if (loginDataLoginForm.rememberMe) {
-      authUtil.setLoginForm(loginDataLoginForm)
-    } else {
-      authUtil.removeLoginForm()
-    }
-    authUtil.setToken(res)
-    if (!redirect.value) {
-      redirect.value = '/'
-    }
-    if (redirect.value.indexOf('sso') !== -1) {
-      window.location.href = window.location.href.replace('/login?redirect=', '')
-    } else {
-      await push({ path: redirect.value || permissionStore.addRouters[0].path })
-    }
-  } finally {
-    loginLoading.value = false
-    loading.value.close()
-  }
-}
+
 watch(
   () => currentRoute.value,
   (route: RouteLocationNormalizedLoaded) => {
@@ -247,58 +133,28 @@ watch(
     immediate: true
   }
 )
-onMounted(() => {
-  getLoginFormCache()
-  getTenantByWebsite()
-})
+const getTenantId = async () => {
+  const res = await getTenantIdByName('AI伴学平台')
+  setTenantId(res)
+}
+const signIn = async () => {
+  const data = await validForm()
+  if (!data) return
+  loginLoading.value = true
+  await emailLogin({
+    email: loginData.loginForm.email,
+    code: loginData.loginForm.code
+  })
+    .then(async (res) => {
+      setToken(res)
+      if (!redirect.value) {
+        redirect.value = '/'
+      }
+      push({ path: redirect.value || permissionStore.addRouters[0].path })
+    })
+    .catch(() => {})
+    .finally(() => {
+      loginLoading.value = false
+    })
+}
 </script>
-
-<style lang="scss" scoped>
-:deep(.anticon) {
-  &:hover {
-    color: var(--el-color-primary) !important;
-  }
-}
-
-.other-login-list {
-  display: grid;
-  width: 100%;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.other-login-item {
-  display: inline-flex;
-  min-height: 36px;
-  color: var(--el-text-color-secondary);
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--el-border-color);
-  border-radius: 6px;
-  transition:
-    color var(--el-transition-duration),
-    border-color var(--el-transition-duration);
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  &:hover {
-    color: var(--el-color-primary);
-    border-color: var(--el-color-primary);
-  }
-}
-
-.login-code {
-  float: right;
-  width: 100%;
-  height: 38px;
-
-  img {
-    width: 100%;
-    height: auto;
-    max-width: 100px;
-    vertical-align: middle;
-    cursor: pointer;
-  }
-}
-</style>
