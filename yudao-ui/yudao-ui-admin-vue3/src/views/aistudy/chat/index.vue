@@ -8,7 +8,12 @@
             <el-divider />
             <div class="answer-text">{{ currentAnswer }}</div>
             <div v-if="knowledgePoints.length" class="mt-12px">
-              <el-tag v-for="point in knowledgePoints" :key="point" class="mr-8px mb-8px" type="success">
+              <el-tag
+                v-for="point in knowledgePoints"
+                :key="point"
+                class="mr-8px mb-8px"
+                type="success"
+              >
                 {{ point }}
               </el-tag>
             </div>
@@ -17,7 +22,13 @@
               <el-tag v-if="mastery !== undefined" type="warning">掌握度：{{ mastery }}%</el-tag>
               <el-tag v-if="xpGained" type="success">经验 +{{ xpGained }}</el-tag>
             </div>
-            <el-alert v-if="nextSuggestion" class="mt-12px" type="info" :closable="false" :title="nextSuggestion" />
+            <el-alert
+              v-if="nextSuggestion"
+              class="mt-12px"
+              type="info"
+              :closable="false"
+              :title="nextSuggestion"
+            />
             <el-card v-if="quiz?.question" class="mt-12px" shadow="never">
               <template #header>小测题</template>
               <div>{{ quiz.question }}</div>
@@ -29,7 +40,12 @@
                 :rows="3"
                 placeholder="请输入你的答案"
               />
-              <el-button class="mt-12px" type="primary" :loading="quizSubmitting" @click="handleSubmitQuiz">
+              <el-button
+                class="mt-12px"
+                type="primary"
+                :loading="quizSubmitting"
+                @click="handleSubmitQuiz"
+              >
                 提交并由 AI 判题
               </el-button>
               <el-alert
@@ -52,8 +68,18 @@
 
         <el-form class="mt-12px" label-width="88px">
           <el-form-item label="关联技能">
-            <el-select v-model="skillId" clearable filterable placeholder="请选择技能，便于更新掌握度">
-              <el-option v-for="item in skillOptions" :key="item.id" :label="item.name" :value="item.id!" />
+            <el-select
+              v-model="skillId"
+              clearable
+              filterable
+              placeholder="请选择技能，便于更新掌握度"
+            >
+              <el-option
+                v-for="item in skillOptions"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id!"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="问题">
@@ -116,7 +142,9 @@ const loadHistory = async () => {
 }
 
 const loadSkills = async () => {
-  skillOptions.value = flattenSkills(await SkillApi.getSkillTree()).filter((item) => item.id !== undefined)
+  skillOptions.value = flattenSkills(await SkillApi.getSkillTree()).filter(
+    (item) => item.id !== undefined
+  )
 }
 
 const sendQuestion = async () => {
@@ -185,25 +213,30 @@ onMounted(() => {
 .chat-answer {
   min-height: 260px;
   padding: 16px;
+  background: var(--el-fill-color-blank);
   border: 1px solid var(--el-border-color);
   border-radius: 8px;
-  background: var(--el-fill-color-blank);
 }
+
 .chat-question {
   font-weight: 600;
 }
+
 .answer-text {
   line-height: 1.8;
 }
+
 .history-question {
-  color: var(--el-text-color-primary);
   font-weight: 600;
+  color: var(--el-text-color-primary);
 }
+
 .history-answer {
   margin-top: 6px;
-  color: var(--el-text-color-secondary);
   line-height: 1.6;
+  color: var(--el-text-color-secondary);
 }
+
 .quiz-answer {
   margin-top: 8px;
   color: var(--el-text-color-secondary);

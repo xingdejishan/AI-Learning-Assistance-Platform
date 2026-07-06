@@ -56,7 +56,9 @@ const studyDurationOptions = computed<any>(() => ({
   tooltip: {},
   xAxis: { type: 'category', data: data.value.studyDurationTrend.map((item) => item.date) },
   yAxis: { type: 'value' },
-  series: [{ type: 'line', smooth: true, data: data.value.studyDurationTrend.map((item) => item.duration) }]
+  series: [
+    { type: 'line', smooth: true, data: data.value.studyDurationTrend.map((item) => item.duration) }
+  ]
 }))
 
 const skillDistributionOptions = computed<any>(() => ({

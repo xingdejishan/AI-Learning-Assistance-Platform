@@ -82,17 +82,17 @@ $prefix-cls: #{$namespace}-layout-radio-picker;
     width: 76px;
     height: 54px;
     overflow: hidden;
+    background-color: #f3f4f6;
     border: 2px solid #e5e7eb;
     border-radius: 6px;
-    background-color: #f3f4f6;
     transition: border-color var(--el-transition-duration);
   }
 
   .layout-card__label {
     width: 76px;
-    color: var(--el-text-color-regular);
     font-size: 12px;
     line-height: 18px;
+    color: var(--el-text-color-regular);
     text-align: center;
   }
 

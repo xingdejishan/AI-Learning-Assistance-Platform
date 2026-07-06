@@ -119,12 +119,12 @@ $prefix-cls: #{$namespace}-login;
   .login-top-tools {
     display: inline-flex;
     height: 40px;
-    align-items: center;
-    gap: 14px;
     padding: 0 12px;
+    background: var(--el-bg-color-overlay);
     border: 1px solid var(--el-border-color);
     border-radius: 8px;
-    background: var(--el-bg-color-overlay);
+    align-items: center;
+    gap: 14px;
   }
 
   .brightness-control {
@@ -141,8 +141,8 @@ $prefix-cls: #{$namespace}-login;
 
   .brightness-value {
     width: 38px;
-    color: var(--el-text-color-secondary);
     font-size: 12px;
+    color: var(--el-text-color-secondary);
     text-align: right;
   }
 
@@ -172,18 +172,18 @@ $prefix-cls: #{$namespace}-login;
     .login-hero-title {
       max-width: min(92%, 760px);
       margin-top: 28px;
-      color: #ffffff;
       font-size: 34px;
       font-weight: 700;
       line-height: 1.28;
+      color: #fff;
     }
 
     .login-hero-message {
       max-width: min(88%, 700px);
       margin-top: 16px;
-      color: rgb(255 255 255 / 82%);
       font-size: 18px;
       line-height: 1.65;
+      color: rgb(255 255 255 / 82%);
     }
 
     &::before {

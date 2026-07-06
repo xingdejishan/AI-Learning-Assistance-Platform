@@ -2,10 +2,20 @@
   <ContentWrap>
     <el-form :inline="true" :model="queryParams">
       <el-form-item label="技能名称">
-        <el-input v-model="queryParams.name" class="!w-220px" clearable placeholder="请输入技能名称" />
+        <el-input
+          v-model="queryParams.name"
+          class="!w-220px"
+          clearable
+          placeholder="请输入技能名称"
+        />
       </el-form-item>
       <el-form-item label="分类">
-        <el-input v-model="queryParams.category" class="!w-180px" clearable placeholder="请输入分类" />
+        <el-input
+          v-model="queryParams.category"
+          class="!w-180px"
+          clearable
+          placeholder="请输入分类"
+        />
       </el-form-item>
       <el-form-item>
         <el-button @click="getList"><Icon class="mr-5px" icon="ep:search" />搜索</el-button>
@@ -19,9 +29,7 @@
   <el-row :gutter="12" class="ai-skill-grid">
     <el-col :lg="6" :md="24" :xs="24">
       <ContentWrap title="职业成长技能树">
-        <div class="ai-skill-nav__hint">
-          选择一个技能方向，查看层级、学习进度和推荐下一步。
-        </div>
+        <div class="ai-skill-nav__hint"> 选择一个技能方向，查看层级、学习进度和推荐下一步。 </div>
         <el-tree
           ref="treeRef"
           :current-node-key="selectedSkillId"
@@ -35,7 +43,11 @@
           <template #default="{ data }">
             <div class="ai-skill-tree-node">
               <div class="ai-skill-tree-node__name">{{ data.name }}</div>
-              <el-tag v-if="data.progress !== undefined" size="small" :type="skillTagType(data.progress)">
+              <el-tag
+                v-if="data.progress !== undefined"
+                size="small"
+                :type="skillTagType(data.progress)"
+              >
                 {{ data.progress || 0 }}%
               </el-tag>
             </div>
@@ -47,8 +59,12 @@
     <el-col :lg="10" :md="24" :xs="24">
       <ContentWrap title="技能详情">
         <template #actions>
-          <el-button v-if="selectedSkill" link type="primary" @click="openForm(selectedSkill)">编辑</el-button>
-          <el-button v-if="selectedSkill" link type="danger" @click="handleDelete(selectedSkill.id)">删除</el-button>
+          <el-button v-if="selectedSkill" link type="primary" @click="openForm(selectedSkill)"
+            >编辑</el-button
+          >
+          <el-button v-if="selectedSkill" link type="danger" @click="handleDelete(selectedSkill.id)"
+            >删除</el-button
+          >
         </template>
 
         <template v-if="selectedSkill">
@@ -57,7 +73,8 @@
               <div>
                 <div class="ai-skill-detail__title">{{ selectedSkill.name }}</div>
                 <div class="ai-skill-detail__meta">
-                  {{ selectedSkill.category || '未分类' }} · 层级 {{ selectedSkill.level || 1 }} · 排序 {{ selectedSkill.sort || 0 }}
+                  {{ selectedSkill.category || '未分类' }} · 层级 {{ selectedSkill.level || 1 }} ·
+                  排序 {{ selectedSkill.sort || 0 }}
                 </div>
               </div>
               <el-tag :type="selectedSkill.status === 0 ? 'success' : 'info'">
@@ -110,7 +127,12 @@
         <template #header>
           <div class="flex items-center justify-between">
             <span>学习状态</span>
-            <el-button v-if="selectedSkill" link type="primary" @click="openProgressDialog(selectedSkill)">
+            <el-button
+              v-if="selectedSkill"
+              link
+              type="primary"
+              @click="openProgressDialog(selectedSkill)"
+            >
               更新进度
             </el-button>
           </div>
@@ -127,18 +149,27 @@
             </div>
             <div>
               <div class="ai-skill-status-grid__label">当前状态</div>
-              <div class="ai-skill-status-grid__value">{{ skillStatusText(selectedSkillProgress) }}</div>
+              <div class="ai-skill-status-grid__value">{{
+                skillStatusText(selectedSkillProgress)
+              }}</div>
             </div>
           </div>
 
-          <el-alert :title="skillRecommendation(selectedSkillProgress)" type="success" show-icon :closable="false" />
+          <el-alert
+            :title="skillRecommendation(selectedSkillProgress)"
+            type="success"
+            show-icon
+            :closable="false"
+          />
 
           <el-divider content-position="left">进度记录</el-divider>
           <el-table :data="selectedProgressRows" size="small" max-height="260">
             <el-table-column label="用户" prop="userId" width="90" />
             <el-table-column label="进度" width="100">
               <template #default="{ row }">
-                <el-tag size="small" :type="skillTagType(row.progress)">{{ row.progress || 0 }}%</el-tag>
+                <el-tag size="small" :type="skillTagType(row.progress)"
+                  >{{ row.progress || 0 }}%</el-tag
+                >
               </template>
             </el-table-column>
             <el-table-column label="建议" prop="recommendation" min-width="140" />
@@ -181,7 +212,12 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="技能描述" prop="description">
-        <el-input v-model="form.description" :rows="4" placeholder="描述技能能力和学习目标" type="textarea" />
+        <el-input
+          v-model="form.description"
+          :rows="4"
+          placeholder="描述技能能力和学习目标"
+          type="textarea"
+        />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -248,7 +284,9 @@ const sameId = (left?: string | number | null, right?: string | number | null) =
   return String(left) === String(right)
 }
 
-const selectedSkill = computed(() => list.value.find((item) => sameId(item.id, selectedSkillId.value)))
+const selectedSkill = computed(() =>
+  list.value.find((item) => sameId(item.id, selectedSkillId.value))
+)
 const selectedChildren = computed(() => {
   if (!selectedSkillId.value) return []
   return list.value.filter((item) => sameId(item.parentId, selectedSkillId.value))
@@ -440,9 +478,9 @@ onMounted(getList)
 
 .ai-skill-nav__hint {
   margin-bottom: 12px;
-  color: var(--el-text-color-secondary);
   font-size: 13px;
   line-height: 1.6;
+  color: var(--el-text-color-secondary);
 }
 
 .ai-skill-tree-node {
@@ -471,15 +509,15 @@ onMounted(getList)
 }
 
 .ai-skill-detail__title {
-  color: var(--el-text-color-primary);
   font-size: 18px;
   font-weight: 700;
+  color: var(--el-text-color-primary);
 }
 
 .ai-skill-detail__meta {
   margin-top: 6px;
-  color: var(--el-text-color-secondary);
   font-size: 13px;
+  color: var(--el-text-color-secondary);
 }
 
 .ai-skill-status-card {
@@ -499,15 +537,15 @@ onMounted(getList)
   margin: 16px 0;
 
   &__label {
-    color: var(--el-text-color-secondary);
     font-size: 13px;
+    color: var(--el-text-color-secondary);
   }
 
   &__value {
     margin-top: 6px;
-    color: var(--el-text-color-primary);
     font-size: 15px;
     font-weight: 600;
+    color: var(--el-text-color-primary);
   }
 }
 </style>

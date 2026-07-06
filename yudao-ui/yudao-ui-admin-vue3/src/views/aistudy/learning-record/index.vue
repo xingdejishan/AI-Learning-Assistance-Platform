@@ -2,7 +2,12 @@
   <ContentWrap>
     <el-form :inline="true" :model="queryParams">
       <el-form-item label="标题">
-        <el-input v-model="queryParams.title" class="!w-220px" clearable placeholder="请输入学习标题" />
+        <el-input
+          v-model="queryParams.title"
+          class="!w-220px"
+          clearable
+          placeholder="请输入学习标题"
+        />
       </el-form-item>
       <el-form-item label="技能编号">
         <el-input-number v-model="queryParams.skillId" :min="1" class="!w-160px" />
@@ -31,10 +36,19 @@
         </template>
       </el-table-column>
     </el-table>
-    <Pagination v-model:limit="queryParams.pageSize" v-model:page="queryParams.pageNo" :total="total" @pagination="getList" />
+    <Pagination
+      v-model:limit="queryParams.pageSize"
+      v-model:page="queryParams.pageNo"
+      :total="total"
+      @pagination="getList"
+    />
   </ContentWrap>
 
-  <el-dialog v-model="dialogVisible" :title="form.id ? '编辑学习记录' : '新增学习记录'" width="600px">
+  <el-dialog
+    v-model="dialogVisible"
+    :title="form.id ? '编辑学习记录' : '新增学习记录'"
+    width="600px"
+  >
     <el-form label-width="110px" :model="form">
       <el-form-item label="标题" required>
         <el-input v-model="form.title" />
@@ -84,7 +98,10 @@ const getList = async () => {
 }
 
 const openForm = (row?: LearningRecordApi.LearningRecordVO) => {
-  Object.assign(form, row || { id: undefined, title: '', skillId: undefined, duration: 0, studyDate: '', content: '' })
+  Object.assign(
+    form,
+    row || { id: undefined, title: '', skillId: undefined, duration: 0, studyDate: '', content: '' }
+  )
   dialogVisible.value = true
 }
 

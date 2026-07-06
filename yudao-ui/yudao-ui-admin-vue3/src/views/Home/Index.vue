@@ -204,7 +204,7 @@ const aiSupportOptions: EChartsOption = {
 
 .ai-home__hero {
   background:
-    linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.08)), var(--el-bg-color);
+    linear-gradient(135deg, rgb(37 99 235 / 12%), rgb(124 58 237 / 8%)), var(--el-bg-color);
 }
 
 .ai-home__hero-main {
@@ -216,23 +216,23 @@ const aiSupportOptions: EChartsOption = {
 
   h1 {
     margin: 8px 0;
-    color: var(--el-text-color-primary);
     font-size: 28px;
     font-weight: 700;
     line-height: 1.3;
+    color: var(--el-text-color-primary);
   }
 
   p {
     margin: 0;
-    color: var(--el-text-color-secondary);
     font-size: 14px;
+    color: var(--el-text-color-secondary);
   }
 }
 
 .ai-home__eyebrow {
-  color: var(--el-color-primary);
   font-size: 13px;
   font-weight: 600;
+  color: var(--el-color-primary);
 }
 
 .ai-home__metric {
@@ -255,14 +255,14 @@ const aiSupportOptions: EChartsOption = {
 }
 
 .ai-home__metric-label {
-  color: var(--el-text-color-secondary);
   font-size: 13px;
+  color: var(--el-text-color-secondary);
 }
 
 .ai-home__metric-value {
   margin-top: 6px;
-  color: var(--el-text-color-primary);
   font-size: 24px;
   font-weight: 700;
+  color: var(--el-text-color-primary);
 }
 </style>

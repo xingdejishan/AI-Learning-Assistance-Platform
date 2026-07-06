@@ -322,21 +322,21 @@ onMounted(() => {
 .other-login-item {
   display: inline-flex;
   min-height: 36px;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  color: var(--el-text-color-secondary);
+  cursor: pointer;
+  background: transparent;
   border: 1px solid var(--el-border-color);
   border-radius: 6px;
-  color: var(--el-text-color-secondary);
-  background: transparent;
-  cursor: pointer;
   transition:
     color var(--el-transition-duration),
     border-color var(--el-transition-duration);
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 
   &:hover {
-    border-color: var(--el-color-primary);
     color: var(--el-color-primary);
+    border-color: var(--el-color-primary);
   }
 }
 

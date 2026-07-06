@@ -242,7 +242,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
       hidden: true,
       breadcrumb: false
     }
-  },
+  }
 ]
 
 export default remainingRouter

@@ -72,7 +72,10 @@ export const getTodayReviews = (): Promise<KnowledgePointVO[]> => {
   return request.get({ url: '/aistudy/review/today' })
 }
 
-export const submitReview = (data: { knowledgePointId: number; remembered: boolean }): Promise<ReviewSubmitRespVO> => {
+export const submitReview = (data: {
+  knowledgePointId: number
+  remembered: boolean
+}): Promise<ReviewSubmitRespVO> => {
   return request.post({ url: '/aistudy/review/submit', data })
 }
 
