@@ -315,7 +315,7 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     public AuthLoginRespVO emailLogin(AuthEmailLoginReqVO reqVO) {
         emailCodeService.validateEmailCode(reqVO.getEmail(), reqVO.getCode());
 
-        AdminUserDO user = userService.getUserByUsername(reqVO.getEmail());
+        AdminUserDO user = userService.getUserByEmail(reqVO.getEmail());
         if (user == null) {
             throw exception(USER_NOT_EXISTS);
         }
