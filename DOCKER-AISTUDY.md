@@ -19,6 +19,12 @@ C:\Users\zhang\Documents\aistudy-docker-workspace
 - MySQL：localhost:13306，root/root
 - Redis：localhost:16379
 
+默认登录：
+
+- 租户：AI伴学平台
+- 账号：admin
+- 密码：admin123
+
 HarmonyOS 客户端的 `baseUrl` 要填写电脑局域网 IP：
 
 ```text
