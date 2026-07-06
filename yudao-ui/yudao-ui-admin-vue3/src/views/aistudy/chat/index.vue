@@ -1,7 +1,7 @@
 <template>
-  <el-row :gutter="12">
+  <el-row :gutter="12" class="ai-chat-page">
     <el-col :lg="16" :md="24" :xs="24">
-      <ContentWrap title="AI 智能辅导">
+      <ContentWrap :title="t('aiStudy.chat.title')">
         <div class="chat-answer">
           <div v-if="currentAnswer">
             <div class="chat-question">{{ currentQuestion }}</div>
@@ -18,9 +18,15 @@
               </el-tag>
             </div>
             <div class="mt-12px flex items-center gap-12px">
-              <el-tag type="info">会话：{{ conversationId }}</el-tag>
-              <el-tag v-if="mastery !== undefined" type="warning">掌握度：{{ mastery }}%</el-tag>
-              <el-tag v-if="xpGained" type="success">经验 +{{ xpGained }}</el-tag>
+              <el-tag type="info"
+                >{{ t('aiStudy.chat.conversation') }}: {{ conversationId }}</el-tag
+              >
+              <el-tag v-if="mastery !== undefined" type="warning">
+                {{ t('aiStudy.chat.mastery') }}: {{ mastery }}%
+              </el-tag>
+              <el-tag v-if="xpGained" type="success">
+                {{ t('aiStudy.chat.xpGained') }} +{{ xpGained }}
+              </el-tag>
             </div>
             <el-alert
               v-if="nextSuggestion"
@@ -30,15 +36,17 @@
               :title="nextSuggestion"
             />
             <el-card v-if="quiz?.question" class="mt-12px" shadow="never">
-              <template #header>小测题</template>
+              <template #header>{{ t('aiStudy.chat.quiz') }}</template>
               <div>{{ quiz.question }}</div>
-              <div v-if="quiz.answer" class="quiz-answer">参考答案：{{ quiz.answer }}</div>
+              <div v-if="quiz.answer" class="quiz-answer">
+                {{ t('aiStudy.chat.referenceAnswer') }}: {{ quiz.answer }}
+              </div>
               <el-input
                 v-model="quizAnswer"
                 class="mt-12px"
                 type="textarea"
                 :rows="3"
-                placeholder="请输入你的答案"
+                :placeholder="t('aiStudy.chat.answerPlaceholder')"
               />
               <el-button
                 class="mt-12px"
@@ -46,33 +54,35 @@
                 :loading="quizSubmitting"
                 @click="handleSubmitQuiz"
               >
-                提交并由 AI 判题
+                {{ t('aiStudy.chat.submitQuiz') }}
               </el-button>
               <el-alert
                 v-if="quizResult"
                 class="mt-12px"
-                :title="quizResult.correct ? '回答正确' : '还需要复习'"
+                :title="
+                  quizResult.correct ? t('aiStudy.chat.correct') : t('aiStudy.chat.needReview')
+                "
                 :type="quizResult.correct ? 'success' : 'warning'"
                 show-icon
                 :closable="false"
               >
-                <div>得分：{{ quizResult.score }}</div>
-                <div>反馈：{{ quizResult.feedback }}</div>
-                <div>XP：+{{ quizResult.xpGained || 0 }}</div>
-                <div>最新掌握度：{{ quizResult.mastery || 0 }}%</div>
+                <div>{{ t('aiStudy.chat.score') }}: {{ quizResult.score }}</div>
+                <div>{{ t('aiStudy.chat.feedback') }}: {{ quizResult.feedback }}</div>
+                <div>{{ t('aiStudy.common.xp') }}: {{ quizResult.xpGained || 0 }}</div>
+                <div>{{ t('aiStudy.chat.latestMastery') }}: {{ quizResult.mastery || 0 }}%</div>
               </el-alert>
             </el-card>
           </div>
-          <el-empty v-else description="输入学习或求职问题，AI 会沉淀知识点并生成复习任务" />
+          <el-empty v-else :description="t('aiStudy.chat.empty')" />
         </div>
 
         <el-form class="mt-12px" label-width="88px">
-          <el-form-item label="关联技能">
+          <el-form-item :label="t('aiStudy.chat.relatedSkill')">
             <el-select
               v-model="skillId"
               clearable
               filterable
-              placeholder="请选择技能，便于更新掌握度"
+              :placeholder="t('aiStudy.chat.skillPlaceholder')"
             >
               <el-option
                 v-for="item in skillOptions"
@@ -82,20 +92,25 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="问题">
-            <el-input v-model="question" type="textarea" :rows="5" placeholder="请输入你的问题" />
+          <el-form-item :label="t('aiStudy.chat.question')">
+            <el-input
+              v-model="question"
+              type="textarea"
+              :rows="5"
+              :placeholder="t('aiStudy.chat.questionPlaceholder')"
+            />
           </el-form-item>
         </el-form>
 
         <div class="text-right">
           <el-button type="primary" :loading="sending" @click="sendQuestion">
-            <Icon class="mr-5px" icon="ep:promotion" />发送
+            <Icon class="mr-5px" icon="ep:promotion" />{{ t('aiStudy.chat.send') }}
           </el-button>
         </div>
       </ContentWrap>
     </el-col>
     <el-col :lg="8" :md="24" :xs="24">
-      <ContentWrap title="历史对话">
+      <ContentWrap :title="t('aiStudy.chat.history')">
         <el-timeline>
           <el-timeline-item v-for="item in history" :key="item.id" :timestamp="item.createTime">
             <div class="history-question">{{ item.question }}</div>
@@ -114,6 +129,7 @@ import * as SkillApi from '@/api/aistudy/skill'
 
 defineOptions({ name: 'AiStudyChat' })
 
+const { t } = useI18n()
 const message = useMessage()
 const question = ref('')
 const currentQuestion = ref('')
@@ -149,7 +165,7 @@ const loadSkills = async () => {
 
 const sendQuestion = async () => {
   if (!question.value.trim()) {
-    message.warning('请输入问题')
+    message.warning(t('aiStudy.chat.inputQuestion'))
     return
   }
   sending.value = true
@@ -179,11 +195,11 @@ const sendQuestion = async () => {
 
 const handleSubmitQuiz = async () => {
   if (!skillId.value || !quiz.value?.question || !quiz.value?.answer) {
-    message.warning('当前小测题信息不完整')
+    message.warning(t('aiStudy.chat.quizIncomplete'))
     return
   }
   if (!quizAnswer.value.trim()) {
-    message.warning('请先填写你的答案')
+    message.warning(t('aiStudy.chat.inputQuizAnswer'))
     return
   }
   quizSubmitting.value = true
@@ -197,7 +213,9 @@ const handleSubmitQuiz = async () => {
     })
     mastery.value = quizResult.value.mastery
     xpGained.value = quizResult.value.xpGained
-    message.success(quizResult.value.correct ? '回答正确' : '回答还需改进')
+    message.success(
+      quizResult.value.correct ? t('aiStudy.chat.correctMessage') : t('aiStudy.chat.improveMessage')
+    )
   } finally {
     quizSubmitting.value = false
   }
@@ -210,6 +228,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.ai-chat-page {
+  font-size: var(--app-font-size-base);
+}
+
 .chat-answer {
   min-height: 260px;
   padding: 16px;
@@ -219,26 +241,31 @@ onMounted(() => {
 }
 
 .chat-question {
+  font-size: var(--app-font-size-base);
   font-weight: 600;
 }
 
 .answer-text {
+  font-size: var(--app-font-size-base);
   line-height: 1.8;
 }
 
 .history-question {
+  font-size: var(--app-font-size-base);
   font-weight: 600;
   color: var(--el-text-color-primary);
 }
 
 .history-answer {
   margin-top: 6px;
+  font-size: var(--app-font-size-base);
   line-height: 1.6;
   color: var(--el-text-color-secondary);
 }
 
 .quiz-answer {
   margin-top: 8px;
+  font-size: var(--app-font-size-base);
   color: var(--el-text-color-secondary);
 }
 </style>

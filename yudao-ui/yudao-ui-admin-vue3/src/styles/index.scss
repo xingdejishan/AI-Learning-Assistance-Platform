@@ -3,6 +3,62 @@
 @use './theme.scss';
 @use 'element-plus/theme-chalk/dark/css-vars.css';
 
+:root,
+html.app-font-default {
+  --app-font-size-base: 14px;
+  --app-font-size-small: 12px;
+  --app-font-size-large: 16px;
+  --app-title-font-size: 18px;
+  --app-menu-font-size: 14px;
+}
+
+html.app-font-small {
+  --app-font-size-base: 13px;
+  --app-font-size-small: 12px;
+  --app-font-size-large: 15px;
+  --app-title-font-size: 16px;
+  --app-menu-font-size: 13px;
+}
+
+html.app-font-large {
+  --app-font-size-base: 16px;
+  --app-font-size-small: 14px;
+  --app-font-size-large: 18px;
+  --app-title-font-size: 20px;
+  --app-menu-font-size: 16px;
+}
+
+body {
+  font-size: var(--app-font-size-base);
+}
+
+.v-tool-header,
+.v-menu__title,
+.v-tags-view,
+.el-menu-item,
+.el-sub-menu__title {
+  font-size: var(--app-menu-font-size) !important;
+}
+
+.el-button,
+.el-form-item__label,
+.el-input,
+.el-select,
+.el-table,
+.el-descriptions,
+.el-empty__description,
+.el-pagination,
+.el-dropdown-menu__item,
+.el-statistic__head,
+.el-card__body {
+  font-size: var(--app-font-size-base);
+}
+
+.el-card__header,
+.v-content-wrap .el-card__header {
+  font-size: var(--app-title-font-size);
+}
+
 .reset-margin [class*='el-icon'] + span {
   margin-left: 2px !important;
 }

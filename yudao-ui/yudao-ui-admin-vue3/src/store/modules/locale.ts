@@ -2,21 +2,31 @@ import { defineStore } from 'pinia'
 import { store } from '../index'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import en from 'element-plus/es/locale/lang/en'
-import es from 'element-plus/es/locale/lang/es'
-import ar from 'element-plus/es/locale/lang/ar'
-import fr from 'element-plus/es/locale/lang/fr'
-import { CACHE_KEY, useCache } from '@/hooks/web/useCache'
 import { LocaleDropdownType } from '@/types/localeDropdown'
 
-const { wsCache } = useCache()
+export const APP_LOCALE_KEY = 'ai-study-locale'
+const supportedLocales: LocaleType[] = ['zh-CN', 'en-US']
 
 const elLocaleMap = {
   'zh-CN': zhCn,
-  en: en,
-  es: es,
-  ar: ar,
-  fr: fr
+  'en-US': en
 }
+
+export const normalizeLocale = (locale?: string | null): LocaleType => {
+  if (locale === 'en' || locale === 'en-US') return 'en-US'
+  return 'zh-CN'
+}
+
+const getStoredLocale = (): LocaleType => {
+  const stored = localStorage.getItem(APP_LOCALE_KEY) || localStorage.getItem('lang')
+  return normalizeLocale(stored)
+}
+
+const persistLocale = (locale: LocaleType) => {
+  localStorage.setItem(APP_LOCALE_KEY, locale)
+  localStorage.removeItem('lang')
+}
+
 interface LocaleState {
   currentLocale: LocaleDropdownType
   localeMap: LocaleDropdownType[]
@@ -24,32 +34,20 @@ interface LocaleState {
 
 export const useLocaleStore = defineStore('locales', {
   state: (): LocaleState => {
+    const locale = getStoredLocale()
     return {
       currentLocale: {
-        lang: wsCache.get(CACHE_KEY.LANG) || 'zh-CN',
-        elLocale: elLocaleMap[wsCache.get(CACHE_KEY.LANG) || 'zh-CN']
+        lang: locale,
+        elLocale: elLocaleMap[locale]
       },
-      // 多语言
       localeMap: [
         {
           lang: 'zh-CN',
           name: '中文'
         },
         {
-          lang: 'en',
+          lang: 'en-US',
           name: 'English'
-        },
-        {
-          lang: 'es',
-          name: 'Español'
-        },
-        {
-          lang: 'ar',
-          name: 'العربية'
-        },
-        {
-          lang: 'fr',
-          name: 'Français'
         }
       ]
     }
@@ -64,10 +62,10 @@ export const useLocaleStore = defineStore('locales', {
   },
   actions: {
     setCurrentLocale(localeMap: LocaleDropdownType) {
-      // this.locale = Object.assign(this.locale, localeMap)
-      this.currentLocale.lang = localeMap?.lang
-      this.currentLocale.elLocale = elLocaleMap[localeMap?.lang]
-      wsCache.set(CACHE_KEY.LANG, localeMap?.lang)
+      const locale = supportedLocales.includes(localeMap?.lang) ? localeMap.lang : 'zh-CN'
+      this.currentLocale.lang = locale
+      this.currentLocale.elLocale = elLocaleMap[locale]
+      persistLocale(locale)
     }
   }
 })

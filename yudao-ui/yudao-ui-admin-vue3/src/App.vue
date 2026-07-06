@@ -5,6 +5,7 @@ import { useDesign } from '@/hooks/web/useDesign'
 import { CACHE_KEY, useCache } from '@/hooks/web/useCache'
 import routerSearch from '@/components/RouterSearch/index.vue'
 import { applyGlobalBrightness } from '@/utils/brightness'
+import { applyAppFontSize } from '@/utils/appFontSize'
 
 defineOptions({ name: 'APP' })
 
@@ -25,6 +26,7 @@ const setDefaultTheme = () => {
 }
 setDefaultTheme()
 applyGlobalBrightness()
+watch(currentSize, (size) => applyAppFontSize(size), { immediate: true })
 </script>
 <template>
   <ConfigGlobal :size="currentSize">

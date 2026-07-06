@@ -11,14 +11,29 @@ type I18nGlobalTranslation = {
 
 type I18nTranslationRestParameters = [string, any]
 
+const titleKeyMap: Record<string, string> = {
+  首页: 'router.home',
+  AI助学系统: 'aiStudy.menu.root',
+  AI学习辅助平台: 'aiStudy.menu.root',
+  技能树管理: 'aiStudy.menu.skillTree',
+  学习记录: 'aiStudy.menu.learningRecord',
+  'AI 智能辅导': 'aiStudy.menu.chat',
+  简历诊断: 'aiStudy.menu.resume',
+  学习数据看板: 'aiStudy.menu.dashboard',
+  学习闭环看板: 'aiStudy.menu.learningFlow',
+  今日复习: 'aiStudy.menu.review',
+  学习画像: 'aiStudy.menu.profile'
+}
+
 const getKey = (namespace: string | undefined, key: string) => {
+  const mappedKey = titleKeyMap[key] || key
   if (!namespace) {
-    return key
+    return mappedKey
   }
-  if (key.startsWith(namespace)) {
-    return key
+  if (mappedKey.startsWith(namespace)) {
+    return mappedKey
   }
-  return `${namespace}.${key}`
+  return `${namespace}.${mappedKey}`
 }
 
 export const useI18n = (
@@ -40,9 +55,10 @@ export const useI18n = (
 
   const tFn: I18nGlobalTranslation = (key: string, ...arg: any[]) => {
     if (!key) return ''
-    if (!key.includes('.') && !namespace) return key
+    const mappedKey = getKey(namespace, key)
+    if (!mappedKey.includes('.') && !namespace) return mappedKey
     //@ts-ignore
-    return t(getKey(namespace, key), ...(arg as I18nTranslationRestParameters))
+    return t(mappedKey, ...(arg as I18nTranslationRestParameters))
   }
   return {
     ...methods,

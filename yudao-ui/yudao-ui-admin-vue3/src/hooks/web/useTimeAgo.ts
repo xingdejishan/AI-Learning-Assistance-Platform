@@ -3,7 +3,7 @@ import { useLocaleStoreWithOut } from '@/store/modules/locale'
 
 const TIME_AGO_MESSAGE_MAP: {
   'zh-CN': UseTimeAgoMessages
-  en: UseTimeAgoMessages
+  'en-US': UseTimeAgoMessages
 } = {
   // @ts-ignore
   'zh-CN': {
@@ -19,7 +19,7 @@ const TIME_AGO_MESSAGE_MAP: {
     second: (n) => `${n} 秒`
   },
   // @ts-ignore
-  en: {
+  'en-US': {
     justNow: 'just now',
     past: (n) => (n.match(/\d/) ? `${n} ago` : n),
     future: (n) => (n.match(/\d/) ? `in ${n}` : n),

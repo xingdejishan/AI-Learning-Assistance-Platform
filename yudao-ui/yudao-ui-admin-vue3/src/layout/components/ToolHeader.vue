@@ -3,6 +3,8 @@ import { defineComponent, computed } from 'vue'
 import { Collapse } from '@/layout/components/Collapse'
 import { UserInfo } from '@/layout/components/UserInfo'
 import { Screenfull } from '@/layout/components/Screenfull'
+import { LocaleDropdown } from '@/layout/components/LocaleDropdown'
+import { SizeDropdown } from '@/layout/components/SizeDropdown'
 import { Breadcrumb } from '@/layout/components/Breadcrumb'
 import RouterSearch from '@/components/RouterSearch/index.vue'
 import TenantVisit from '@/layout/components/TenantVisit/index.vue'
@@ -30,6 +32,10 @@ const screenfull = computed(() => appStore.getScreenfull)
 
 // 搜索图片
 const search = computed(() => appStore.search)
+
+const size = computed(() => appStore.getSize)
+
+const locale = computed(() => appStore.getLocale)
 
 // 布局
 const layout = computed(() => appStore.getLayout)
@@ -82,6 +88,12 @@ export default defineComponent({
           ) : undefined}
           {search.value ? (
             <RouterSearch isModal={false} color="var(--top-header-text-color)" />
+          ) : undefined}
+          {size.value ? (
+            <SizeDropdown class="custom-hover" color="var(--top-header-text-color)" />
+          ) : undefined}
+          {locale.value ? (
+            <LocaleDropdown class="custom-hover" color="var(--top-header-text-color)" />
           ) : undefined}
           <UserInfo></UserInfo>
         </div>

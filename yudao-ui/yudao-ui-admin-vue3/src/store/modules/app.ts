@@ -4,6 +4,7 @@ import { LayoutType } from '@/types/layout'
 import { ThemeTypes } from '@/types/theme'
 import { humpToUnderline, setCssVar } from '@/utils'
 import { getCssColorVariable, hexToRGB, mix } from '@/utils/color'
+import { getStoredAppFontSize, persistAppFontSize } from '@/utils/appFontSize'
 import { normalizeLayout } from '@/utils/layout'
 import { ElMessage } from 'element-plus'
 import { defineStore } from 'pinia'
@@ -46,7 +47,7 @@ export const useAppStore = defineStore('app', {
   state: (): AppState => {
     return {
       userInfo: 'userInfo', // 登录信息存储字段-建议每个项目换一个字段，避免与其他项目冲突
-      sizeMap: ['default', 'large', 'small'],
+      sizeMap: ['small', 'default', 'large'],
       mobile: false, // 是否是移动端
       title: import.meta.env.VITE_APP_TITLE, // 标题
       pageLoading: false, // 路由跳转loading
@@ -58,8 +59,8 @@ export const useAppStore = defineStore('app', {
       hamburger: true, // 折叠图标
       screenfull: true, // 全屏图标
       search: true, // 搜索图标
-      size: false, // 尺寸图标
-      locale: false, // 多语言图标
+      size: true, // 尺寸图标
+      locale: true, // 多语言图标
       message: false, // 消息图标
       im: false,
       tagsView: true, // 标签页
@@ -73,7 +74,7 @@ export const useAppStore = defineStore('app', {
 
       layout: normalizeLayout(wsCache.get(CACHE_KEY.LAYOUT)), // layout布局
       isDark: wsCache.get(CACHE_KEY.IS_DARK) || false, // 是否是暗黑模式
-      currentSize: wsCache.get('default') || 'default', // 组件尺寸
+      currentSize: getStoredAppFontSize(), // 组件尺寸
       theme: wsCache.get(CACHE_KEY.THEME) || {
         // 主题色
         elColorPrimary: '#409eff',
@@ -305,7 +306,7 @@ export const useAppStore = defineStore('app', {
     },
     setCurrentSize(currentSize: ElementPlusSize) {
       this.currentSize = currentSize
-      wsCache.set('currentSize', this.currentSize)
+      persistAppFontSize(this.currentSize)
     },
     setMobile(mobile: boolean) {
       this.mobile = mobile

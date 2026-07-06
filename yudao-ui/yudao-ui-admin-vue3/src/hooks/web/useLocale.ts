@@ -1,5 +1,5 @@
 import { i18n } from '@/plugins/vueI18n'
-import { useLocaleStoreWithOut } from '@/store/modules/locale'
+import { normalizeLocale, useLocaleStoreWithOut } from '@/store/modules/locale'
 import { setHtmlPageLang } from '@/plugins/vueI18n/helper'
 
 const setI18nLanguage = (locale: LocaleType) => {
@@ -20,13 +20,14 @@ export const useLocale = () => {
   // Switching the language will change the locale of useI18n
   // And submit to configuration modification
   const changeLocale = async (locale: LocaleType) => {
+    const normalizedLocale = normalizeLocale(locale)
     const globalI18n = i18n.global
 
-    const langModule = await import(`../../locales/${locale}.ts`)
+    const langModule = await import(`../../locales/${normalizedLocale}.ts`)
 
-    globalI18n.setLocaleMessage(locale, langModule.default)
+    globalI18n.setLocaleMessage(normalizedLocale, langModule.default)
 
-    setI18nLanguage(locale)
+    setI18nLanguage(normalizedLocale)
   }
 
   return {

@@ -1,21 +1,23 @@
 <template>
   <ContentWrap>
     <el-form :inline="true" :model="queryParams">
-      <el-form-item label="标题">
+      <el-form-item :label="t('aiStudy.record.title')">
         <el-input
           v-model="queryParams.title"
           class="!w-220px"
           clearable
-          placeholder="请输入学习标题"
+          :placeholder="t('aiStudy.record.titlePlaceholder')"
         />
       </el-form-item>
-      <el-form-item label="技能编号">
+      <el-form-item :label="t('aiStudy.common.skillId')">
         <el-input-number v-model="queryParams.skillId" :min="1" class="!w-160px" />
       </el-form-item>
       <el-form-item>
-        <el-button @click="getList"><Icon class="mr-5px" icon="ep:search" />搜索</el-button>
+        <el-button @click="getList">
+          <Icon class="mr-5px" icon="ep:search" />{{ t('aiStudy.common.search') }}
+        </el-button>
         <el-button type="primary" plain @click="openForm()">
-          <Icon class="mr-5px" icon="ep:plus" />新增
+          <Icon class="mr-5px" icon="ep:plus" />{{ t('aiStudy.common.add') }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -23,16 +25,25 @@
 
   <ContentWrap>
     <el-table v-loading="loading" :data="list">
-      <el-table-column label="标题" prop="title" min-width="160" />
-      <el-table-column label="用户编号" prop="userId" width="110" />
-      <el-table-column label="技能编号" prop="skillId" width="110" />
-      <el-table-column label="学习时长/分钟" prop="duration" width="140" />
-      <el-table-column label="学习日期" prop="studyDate" width="120" />
-      <el-table-column label="学习内容" prop="content" min-width="180" show-overflow-tooltip />
-      <el-table-column label="操作" width="140" fixed="right">
+      <el-table-column :label="t('aiStudy.record.title')" prop="title" min-width="160" />
+      <el-table-column :label="t('aiStudy.common.userId')" prop="userId" width="110" />
+      <el-table-column :label="t('aiStudy.common.skillId')" prop="skillId" width="110" />
+      <el-table-column :label="t('aiStudy.record.duration')" prop="duration" width="140" />
+      <el-table-column :label="t('aiStudy.record.studyDate')" prop="studyDate" width="120" />
+      <el-table-column
+        :label="t('aiStudy.record.content')"
+        prop="content"
+        min-width="180"
+        show-overflow-tooltip
+      />
+      <el-table-column :label="t('aiStudy.common.actions')" width="140" fixed="right">
         <template #default="{ row }">
-          <el-button link type="primary" @click="openForm(row)">编辑</el-button>
-          <el-button link type="danger" @click="handleDelete(row.id)">删除</el-button>
+          <el-button link type="primary" @click="openForm(row)">
+            {{ t('aiStudy.common.edit') }}
+          </el-button>
+          <el-button link type="danger" @click="handleDelete(row.id)">
+            {{ t('aiStudy.common.delete') }}
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -46,29 +57,29 @@
 
   <el-dialog
     v-model="dialogVisible"
-    :title="form.id ? '编辑学习记录' : '新增学习记录'"
+    :title="form.id ? t('aiStudy.record.editTitle') : t('aiStudy.record.addTitle')"
     width="600px"
   >
     <el-form label-width="110px" :model="form">
-      <el-form-item label="标题" required>
+      <el-form-item :label="t('aiStudy.record.title')" required>
         <el-input v-model="form.title" />
       </el-form-item>
-      <el-form-item label="技能编号">
+      <el-form-item :label="t('aiStudy.common.skillId')">
         <el-input-number v-model="form.skillId" :min="1" />
       </el-form-item>
-      <el-form-item label="学习时长">
+      <el-form-item :label="t('aiStudy.record.duration')">
         <el-input-number v-model="form.duration" :min="0" />
       </el-form-item>
-      <el-form-item label="学习日期">
+      <el-form-item :label="t('aiStudy.record.studyDate')">
         <el-date-picker v-model="form.studyDate" type="date" value-format="YYYY-MM-DD" />
       </el-form-item>
-      <el-form-item label="学习内容">
+      <el-form-item :label="t('aiStudy.record.content')">
         <el-input v-model="form.content" type="textarea" :rows="4" />
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button @click="dialogVisible = false">取消</el-button>
-      <el-button type="primary" @click="submitForm">保存</el-button>
+      <el-button @click="dialogVisible = false">{{ t('aiStudy.common.cancel') }}</el-button>
+      <el-button type="primary" @click="submitForm">{{ t('aiStudy.common.save') }}</el-button>
     </template>
   </el-dialog>
 </template>
@@ -78,6 +89,7 @@ import * as LearningRecordApi from '@/api/aistudy/learningRecord'
 
 defineOptions({ name: 'AiStudyLearningRecord' })
 
+const { t } = useI18n()
 const message = useMessage()
 const loading = ref(false)
 const list = ref<LearningRecordApi.LearningRecordVO[]>([])
@@ -111,7 +123,7 @@ const submitForm = async () => {
   } else {
     await LearningRecordApi.createLearningRecord(form)
   }
-  message.success('保存成功')
+  message.success(t('aiStudy.record.saved'))
   dialogVisible.value = false
   await getList()
 }
@@ -119,7 +131,7 @@ const submitForm = async () => {
 const handleDelete = async (id: number) => {
   await message.delConfirm()
   await LearningRecordApi.deleteLearningRecord(id)
-  message.success('删除成功')
+  message.success(t('aiStudy.record.deleted'))
   await getList()
 }
 

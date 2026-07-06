@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="ai-dashboard-page">
     <el-row :gutter="12">
       <el-col v-for="item in metrics" :key="item.label" :lg="4" :md="8" :xs="24">
         <el-card shadow="never">
@@ -10,17 +10,17 @@
 
     <el-row :gutter="12" class="mt-12px">
       <el-col :lg="8" :md="24" :xs="24">
-        <ContentWrap title="近 7 日学习时长趋势">
+        <ContentWrap :title="t('aiStudy.dashboard.studyTrend')">
           <Echart :options="studyDurationOptions" :height="280" />
         </ContentWrap>
       </el-col>
       <el-col :lg="8" :md="24" :xs="24">
-        <ContentWrap title="技能掌握度分布">
+        <ContentWrap :title="t('aiStudy.dashboard.skillDistribution')">
           <Echart :options="skillDistributionOptions" :height="280" />
         </ContentWrap>
       </el-col>
       <el-col :lg="8" :md="24" :xs="24">
-        <ContentWrap title="AI 辅导与简历诊断次数">
+        <ContentWrap :title="t('aiStudy.dashboard.aiResume')">
           <Echart :options="aiResumeOptions" :height="280" />
         </ContentWrap>
       </el-col>
@@ -33,6 +33,7 @@ import * as DashboardApi from '@/api/aistudy/dashboard'
 
 defineOptions({ name: 'AiStudyDashboard' })
 
+const { t } = useI18n()
 const data = ref<DashboardApi.DashboardVO>({
   totalStudyDuration: 0,
   todayLearningRecordCount: 0,
@@ -45,11 +46,19 @@ const data = ref<DashboardApi.DashboardVO>({
 })
 
 const metrics = computed(() => [
-  { label: '学习总时长', value: data.value.totalStudyDuration, suffix: '分钟' },
-  { label: '今日学习记录', value: data.value.todayLearningRecordCount },
-  { label: 'AI 辅导次数', value: data.value.aiChatCount },
-  { label: '简历诊断次数', value: data.value.resumeDiagnosisCount },
-  { label: '技能树完成率', value: data.value.skillCompletionRate, suffix: '%' }
+  {
+    label: t('aiStudy.dashboard.totalDuration'),
+    value: data.value.totalStudyDuration,
+    suffix: t('aiStudy.common.minute')
+  },
+  { label: t('aiStudy.dashboard.todayRecords'), value: data.value.todayLearningRecordCount },
+  { label: t('aiStudy.dashboard.aiChats'), value: data.value.aiChatCount },
+  { label: t('aiStudy.dashboard.resumeDiagnosis'), value: data.value.resumeDiagnosisCount },
+  {
+    label: t('aiStudy.dashboard.skillCompletion'),
+    value: data.value.skillCompletionRate,
+    suffix: '%'
+  }
 ])
 
 const studyDurationOptions = computed<any>(() => ({
@@ -79,3 +88,9 @@ const loadData = async () => {
 
 onMounted(loadData)
 </script>
+
+<style scoped>
+.ai-dashboard-page {
+  font-size: var(--app-font-size-base);
+}
+</style>
