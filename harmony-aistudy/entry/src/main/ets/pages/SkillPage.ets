@@ -24,9 +24,10 @@ struct SkillPage {
     this.loading = true;
     this.error = '';
     try {
-      const list = await SkillApi.list();
+      const list = await SkillApi.tree();
       const progressList = await SkillApi.progress();
-      this.skills = this.mergeProgress(list || [], progressList || []);
+      const mergedList = this.mergeProgress(list || [], progressList || []);
+      this.skills = this.flattenTree(mergedList);
     } catch (err) {
       this.error = (err as Error).message || '加载技能失败';
       promptAction.showToast({ message: this.error });
@@ -42,8 +43,23 @@ struct SkillPage {
       item.status = progress?.status ?? item.status;
       item.score = progress?.score;
       item.recommendation = progress?.recommendation;
+      if ((item.children || []).length > 0) {
+        item.children = this.mergeProgress(item.children || [], progressList);
+      }
       return item;
     });
+  }
+
+  flattenTree(list: Skill[], level: number = 0): Skill[] {
+    const result: Skill[] = [];
+    list.forEach((item: Skill) => {
+      item.viewLevel = level;
+      result.push(item);
+      if ((item.children || []).length > 0) {
+        result.push(...this.flattenTree(item.children || [], level + 1));
+      }
+    });
+    return result;
   }
 
   build() {
@@ -74,6 +90,7 @@ struct SkillPage {
               }
             }
             .padding(16)
+            .margin({ left: (item.viewLevel || 0) * 16 })
             .width('100%')
             .backgroundColor(Color.White)
             .borderRadius(8)

@@ -10,6 +10,7 @@ export interface Skill {
   progress?: number;
   score?: number;
   recommendation?: string;
+  viewLevel?: number;
   children?: Skill[];
 }
 

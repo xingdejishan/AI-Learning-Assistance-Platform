@@ -6,6 +6,10 @@ export class SkillApi {
     return HttpClient.get<Skill[]>('/aistudy/skill/list');
   }
 
+  static async tree(): Promise<Skill[]> {
+    return HttpClient.get<Skill[]>('/aistudy/skill/tree');
+  }
+
   static async progress(): Promise<SkillProgress[]> {
     return HttpClient.get<SkillProgress[]>('/aistudy/skill/progress');
   }
