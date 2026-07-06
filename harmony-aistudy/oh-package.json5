@@ -1,0 +1,10 @@
+{
+  "modelVersion": "5.0.0",
+  "name": "harmony-aistudy",
+  "version": "1.0.0",
+  "description": "AI Study HarmonyOS NEXT client",
+  "main": "",
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {}
+}

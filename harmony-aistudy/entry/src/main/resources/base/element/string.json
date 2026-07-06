@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "AI Study client"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "AI Study"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "AI伴学"
+    }
+  ]
+}
