@@ -15,17 +15,6 @@
           <LoginFormTitle class="w-full" />
         </el-form-item>
       </el-col>
-      <el-col v-if="false" :span="24" class="px-10px">
-        <el-form-item prop="tenantName">
-          <el-input
-            v-model="loginData.loginForm.tenantName"
-            :placeholder="t('login.tenantNamePlaceholder')"
-            :prefix-icon="iconHouse"
-            link
-            type="primary"
-          />
-        </el-form-item>
-      </el-col>
       <el-col :span="24" class="px-10px">
         <el-form-item prop="username">
           <el-input
@@ -81,14 +70,6 @@
           </el-link>
         </div>
       </el-col>
-      <Verify
-        v-if="loginData.captchaEnable === 'true'"
-        ref="verify"
-        :captchaType="captchaType"
-        :imgSize="{ width: '400px', height: '200px' }"
-        mode="pop"
-        @success="handleLogin"
-      />
       <el-divider content-position="center">{{ t('login.otherLogin') }}</el-divider>
       <el-col :span="24" class="px-10px">
         <el-form-item>
@@ -102,14 +83,12 @@
               <span>{{ t('login.phoneLogin') }}</span>
             </button>
             <button
-              v-for="(item, key) in socialList"
-              :key="key"
               class="other-login-item"
               type="button"
-              @click="doSocialLogin(item.type)"
+              @click="setLoginState(LoginStateEnum.EMAIL)"
             >
-              <Icon :icon="item.icon" :size="22" />
-              <span>{{ t(item.label) }}</span>
+              <Icon icon="ep:message" :size="22" />
+              <span>{{ t('login.emailLogin') }}</span>
             </button>
           </div>
         </el-form-item>
@@ -121,9 +100,7 @@
 import { ElLoading } from 'element-plus'
 import LoginFormTitle from './LoginFormTitle.vue'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
-
 import { useIcon } from '@/hooks/web/useIcon'
-
 import * as authUtil from '@/utils/auth'
 import { usePermissionStore } from '@/store/modules/permission'
 import * as LoginApi from '@/api/login'
@@ -132,8 +109,6 @@ import { LoginStateEnum, useFormValid, useLoginState } from './useLogin'
 defineOptions({ name: 'LoginForm' })
 
 const { t } = useI18n()
-const message = useMessage()
-const iconHouse = useIcon({ icon: 'ep:house' })
 const iconAvatar = useIcon({ icon: 'ep:avatar' })
 const iconLock = useIcon({ icon: 'ep:lock' })
 const formLogin = ref()
@@ -141,20 +116,16 @@ const { validForm } = useFormValid(formLogin)
 const { setLoginState, getLoginState } = useLoginState()
 const { currentRoute, push } = useRouter()
 const permissionStore = usePermissionStore()
-const redirect = ref<string>('')
+const redirect = ref('')
 const loginLoading = ref(false)
-const verify = ref()
-const captchaType = ref('blockPuzzle') // blockPuzzle 滑块 clickWord 点击文字 pictureWord 文字验证码
 
 const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN)
 
 const LoginRules = {
-  tenantName: [required],
   username: [required],
   password: [required]
 }
 const loginData = reactive({
-  isShowPassword: false,
   captchaEnable: import.meta.env.VITE_APP_CAPTCHA_ENABLE,
   tenantEnable: import.meta.env.VITE_APP_TENANT_ENABLE,
   loginForm: {
@@ -162,47 +133,34 @@ const loginData = reactive({
     username: import.meta.env.VITE_APP_DEFAULT_LOGIN_USERNAME || '',
     password: import.meta.env.VITE_APP_DEFAULT_LOGIN_PASSWORD || '',
     captchaVerification: '',
-    rememberMe: true // 默认记录我。如果不需要，可手动修改
+    rememberMe: true
   }
 })
 
-const socialList = [
-  { icon: 'ant-design:wechat-filled', type: 30, label: 'login.wechatLogin' }
-]
-]
-
-// 获取验证码
 const getCode = async () => {
-  // 情况一，未开启：则直接登录
-  if (loginData.captchaEnable === 'false') {
-    await handleLogin({})
-  } else {
-    // 情况二，已开启：则展示验证码；只有完成验证码的情况，才进行登录
-    // 弹出验证码
-    verify.value.show()
-  }
+  await handleLogin({})
 }
-// 获取租户 ID
+
 const getTenantId = async () => {
   if (loginData.tenantEnable === 'true') {
     const res = await LoginApi.getTenantIdByName(loginData.loginForm.tenantName)
     authUtil.setTenantId(res)
   }
 }
-// 记住我
+
 const getLoginFormCache = () => {
   const loginForm = authUtil.getLoginForm()
   if (loginForm) {
     loginData.loginForm = {
       ...loginData.loginForm,
-      username: loginForm.username ? loginForm.username : loginData.loginForm.username,
-      password: loginForm.password ? loginForm.password : loginData.loginForm.password,
+      username: loginForm.username || loginData.loginForm.username,
+      password: loginForm.password || loginData.loginForm.password,
       rememberMe: loginForm.rememberMe,
       tenantName: import.meta.env.VITE_APP_DEFAULT_LOGIN_TENANT || loginData.loginForm.tenantName
     }
   }
 }
-// 根据域名，获得租户信息
+
 const getTenantByWebsite = async () => {
   if (loginData.tenantEnable === 'true') {
     const website = location.host
@@ -213,37 +171,29 @@ const getTenantByWebsite = async () => {
     }
   }
 }
-const loading = ref() // ElLoading.service 返回的实例
-// 登录
+
+const loading = ref()
 const handleLogin = async (params: any) => {
   loginLoading.value = true
   try {
     await getTenantId()
     const data = await validForm()
-    if (!data) {
-      return
-    }
-    const loginDataLoginForm = { ...loginData.loginForm }
-    loginDataLoginForm.captchaVerification = params.captchaVerification
-    const res = await LoginApi.login(loginDataLoginForm)
-    if (!res) {
-      return
-    }
+    if (!data) return
+    const form = { ...loginData.loginForm, captchaVerification: params.captchaVerification }
+    const res = await LoginApi.login(form)
+    if (!res) return
     loading.value = ElLoading.service({
       lock: true,
       text: '正在加载系统中...',
       background: 'rgba(0, 0, 0, 0.7)'
     })
-    if (loginDataLoginForm.rememberMe) {
-      authUtil.setLoginForm(loginDataLoginForm)
+    if (form.rememberMe) {
+      authUtil.setLoginForm(form)
     } else {
       authUtil.removeLoginForm()
     }
     authUtil.setToken(res)
-    if (!redirect.value) {
-      redirect.value = '/'
-    }
-    // 判断是否为SSO登录
+    if (!redirect.value) redirect.value = '/'
     if (redirect.value.indexOf('sso') !== -1) {
       window.location.href = window.location.href.replace('/login?redirect=', '')
     } else {
@@ -251,67 +201,24 @@ const handleLogin = async (params: any) => {
     }
   } finally {
     loginLoading.value = false
-    loading.value.close()
+    loading.value?.close()
   }
 }
 
-// 社交登录
-const doSocialLogin = async (type: number) => {
-  if (type === 0) {
-    message.error('此方式未配置')
-  } else {
-    loginLoading.value = true
-    if (loginData.tenantEnable === 'true') {
-      // 尝试先通过 tenantName 获取租户
-      await getTenantId()
-      // 如果获取不到，则需要弹出提示，进行处理
-      if (!authUtil.getTenantId()) {
-        try {
-          const data = await message.prompt('请输入租户名称', t('common.reminder'))
-          if (data?.action !== 'confirm') throw 'cancel'
-          const res = await LoginApi.getTenantIdByName(data.value)
-          authUtil.setTenantId(res)
-        } catch (error) {
-          if (error === 'cancel') return
-        } finally {
-          loginLoading.value = false
-        }
-      }
-    }
-    // 计算 redirectUri
-    // 注意: type、redirect 需要先 encode 一次，否则钉钉回调会丢失。
-    // 配合 social-login.vue#getUrlValue() 使用
-    const redirectUri =
-      location.origin +
-      '/social-login?' +
-      encodeURIComponent(`type=${type}&redirect=${redirect.value || '/'}`)
-
-    // 进行跳转
-    window.location.href = await LoginApi.socialAuthRedirect(type, encodeURIComponent(redirectUri))
-  }
-}
 watch(
   () => currentRoute.value,
   (route: RouteLocationNormalizedLoaded) => {
-    redirect.value = route?.query?.redirect as string
+    redirect.value = (route?.query?.redirect as string) || ''
   },
-  {
-    immediate: true
-  }
+  { immediate: true }
 )
+
 onMounted(() => {
   getLoginFormCache()
   getTenantByWebsite()
 })
 </script>
-
 <style lang="scss" scoped>
-:deep(.anticon) {
-  &:hover {
-    color: var(--el-color-primary) !important;
-  }
-}
-
 .other-login-list {
   display: grid;
   width: 100%;
@@ -327,30 +234,14 @@ onMounted(() => {
   background: transparent;
   border: 1px solid var(--el-border-color);
   border-radius: 6px;
-  transition:
-    color var(--el-transition-duration),
-    border-color var(--el-transition-duration);
+  transition: color var(--el-transition-duration), border-color var(--el-transition-duration);
   align-items: center;
   justify-content: center;
   gap: 6px;
-
-  &:hover {
-    color: var(--el-color-primary);
-    border-color: var(--el-color-primary);
-  }
 }
 
-.login-code {
-  float: right;
-  width: 100%;
-  height: 38px;
-
-  img {
-    width: 100%;
-    height: auto;
-    max-width: 100px;
-    vertical-align: middle;
-    cursor: pointer;
-  }
+.other-login-item:hover {
+  color: var(--el-color-primary);
+  border-color: var(--el-color-primary);
 }
 </style>
