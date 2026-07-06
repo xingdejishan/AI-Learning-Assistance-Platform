@@ -20,7 +20,7 @@
             tag="div"
           >
             <div key="1" class="login-hero-visual">
-              <img alt="" class="login-hero-image" src="@/assets/imgs/login-ai-study.png" />
+              <img alt="" class="login-hero-image" src="@/assets/imgs/login-ai-study-visual.png" />
             </div>
             <div key="2" class="login-hero-title">{{ t('login.welcome') }}</div>
             <div key="3" class="login-hero-message">{{ t('login.message') }}</div>
@@ -161,8 +161,6 @@ $prefix-cls: #{$namespace}-login;
 
     .login-hero-visual {
       width: min(100%, 680px);
-      height: min(48vh, 400px);
-      overflow: hidden;
     }
 
     .login-hero-image {
