@@ -12,6 +12,23 @@ import { store } from '../index'
 
 const { wsCache } = useCache()
 
+const pixelTheme: ThemeTypes = {
+  elColorPrimary: '#7aa2ff',
+  leftMenuBorderColor: '#2b3548',
+  leftMenuBgColor: '#0a101a',
+  leftMenuBgLightColor: '#101928',
+  leftMenuBgActiveColor: '#182846',
+  leftMenuCollapseBgActiveColor: '#1b3159',
+  leftMenuTextColor: '#aab4c8',
+  leftMenuTextActiveColor: '#f5f7ff',
+  logoTitleTextColor: '#f5f7ff',
+  logoBorderColor: '#2b3548',
+  topHeaderBgColor: '#0c1320',
+  topHeaderTextColor: '#f5f7ff',
+  topHeaderHoverColor: '#172235',
+  topToolBorderColor: '#2b3548'
+}
+
 interface AppState {
   breadcrumb: boolean
   breadcrumbIcon: boolean
@@ -75,36 +92,7 @@ export const useAppStore = defineStore('app', {
       layout: normalizeLayout(wsCache.get(CACHE_KEY.LAYOUT)), // layout布局
       isDark: wsCache.get(CACHE_KEY.IS_DARK) || false, // 是否是暗黑模式
       currentSize: getStoredAppFontSize(), // 组件尺寸
-      theme: wsCache.get(CACHE_KEY.THEME) || {
-        // 主题色
-        elColorPrimary: '#409eff',
-        // 左侧菜单边框颜色
-        leftMenuBorderColor: 'inherit',
-        // 左侧菜单背景颜色
-        leftMenuBgColor: '#001529',
-        // 左侧菜单浅色背景颜色
-        leftMenuBgLightColor: '#0f2438',
-        // 左侧菜单选中背景颜色
-        leftMenuBgActiveColor: 'var(--el-color-primary)',
-        // 左侧菜单收起选中背景颜色
-        leftMenuCollapseBgActiveColor: 'var(--el-color-primary)',
-        // 左侧菜单字体颜色
-        leftMenuTextColor: '#bfcbd9',
-        // 左侧菜单选中字体颜色
-        leftMenuTextActiveColor: '#fff',
-        // logo字体颜色
-        logoTitleTextColor: '#fff',
-        // logo边框颜色
-        logoBorderColor: 'inherit',
-        // 头部背景颜色
-        topHeaderBgColor: '#fff',
-        // 头部字体颜色
-        topHeaderTextColor: 'inherit',
-        // 头部悬停颜色
-        topHeaderHoverColor: '#f6f6f6',
-        // 头部边框颜色
-        topToolBorderColor: '#eee'
-      }
+      theme: pixelTheme
     }
   },
   getters: {

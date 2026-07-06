@@ -78,7 +78,7 @@ watch(
       <div
         v-if="show"
         :class="[
-          'ml-10px text-16px font-700',
+          'ml-10px font-700 text-[var(--app-title-font-size)] pixel-logo-title',
           {
             'text-[var(--logo-title-text-color)]': getLayoutRenderMode(layout) === 'classic',
             'text-[var(--top-header-text-color)]':
@@ -93,3 +93,16 @@ watch(
     </router-link>
   </div>
 </template>
+
+<style scoped>
+.pixel-logo-title {
+  font-family: var(--app-pixel-font);
+  letter-spacing: 0.02em;
+  text-shadow: var(--app-pixel-shadow);
+}
+
+img {
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 2px 0 rgb(0 0 0 / 48%));
+}
+</style>

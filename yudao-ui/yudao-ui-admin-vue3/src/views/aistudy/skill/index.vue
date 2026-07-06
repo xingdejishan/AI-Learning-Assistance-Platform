@@ -485,6 +485,11 @@ onMounted(getList)
   font-size: var(--app-font-size-base);
 }
 
+.ai-skill-grid :deep(.el-card),
+.ai-skill-grid :deep(.v-content-wrap) {
+  border-color: var(--app-border);
+}
+
 .ai-skill-nav__hint {
   margin-bottom: 12px;
   font-size: var(--app-font-size-small);
@@ -499,12 +504,26 @@ onMounted(getList)
   justify-content: space-between;
   gap: 10px;
   font-size: var(--app-font-size-base);
+  border-left: 2px solid transparent;
 }
 
 .ai-skill-tree-node__name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+:deep(.el-tree) {
+  --el-tree-node-hover-bg-color: #1b2940;
+
+  color: var(--app-text-secondary);
+  background: transparent;
+}
+
+:deep(.el-tree-node.is-current > .el-tree-node__content) {
+  color: var(--app-text);
+  background: var(--app-primary-soft);
+  box-shadow: inset 3px 0 0 var(--app-accent);
 }
 
 .ai-skill-detail {
@@ -519,9 +538,11 @@ onMounted(getList)
 }
 
 .ai-skill-detail__title {
+  font-family: var(--app-pixel-font);
   font-size: var(--app-title-font-size);
   font-weight: 700;
-  color: var(--el-text-color-primary);
+  color: var(--app-text);
+  text-shadow: var(--app-pixel-shadow);
 }
 
 .ai-skill-detail__meta {
@@ -532,12 +553,16 @@ onMounted(getList)
 
 .ai-skill-status-card {
   min-height: 100%;
+  border-color: var(--app-border-strong);
 }
 
 .ai-skill-status-card__title {
   margin-bottom: 12px;
+  font-family: var(--app-pixel-font);
   font-size: var(--app-font-size-large);
   font-weight: 600;
+  color: var(--app-primary);
+  text-shadow: var(--app-pixel-shadow);
 }
 
 .ai-skill-status-grid {
@@ -555,7 +580,7 @@ onMounted(getList)
     margin-top: 6px;
     font-size: var(--app-font-size-base);
     font-weight: 600;
-    color: var(--el-text-color-primary);
+    color: var(--app-text);
   }
 }
 </style>

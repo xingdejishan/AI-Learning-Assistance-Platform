@@ -1,35 +1,77 @@
 :root {
-  --login-bg-color: #293146;
+  --app-bg: #080d14;
+
+  --app-bg-soft: #0f1724;
+
+  --app-card-bg: #121a28;
+
+  --app-card-bg-strong: #172235;
+
+  --app-border: #2b3548;
+
+  --app-border-strong: #40506c;
+
+  --app-text: #f5f7ff;
+
+  --app-text-secondary: #aab4c8;
+
+  --app-text-muted: #76839d;
+
+  --app-primary: #7aa2ff;
+
+  --app-primary-soft: rgb(122 162 255 / 16%);
+
+  --app-accent: #ffb7dc;
+
+  --app-accent-soft: rgb(255 183 220 / 16%);
+
+  --app-success: #38d996;
+
+  --app-success-soft: rgb(56 217 150 / 14%);
+
+  --app-warning: #ffd166;
+
+  --app-danger: #ff6b91;
+
+  --app-pixel-font:
+    'Segoe UI Semibold', 'Arial Rounded MT Bold', 'Microsoft YaHei UI', ui-monospace,
+    SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --app-body-font: Inter, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+
+  --app-pixel-shadow: 2px 2px 0 rgb(0 0 0 / 55%);
+
+  --login-bg-color: var(--app-bg);
 
   --left-menu-max-width: 200px;
 
   --left-menu-min-width: 64px;
 
-  --left-menu-bg-color: #001529;
+  --left-menu-bg-color: #0a101a;
 
-  --left-menu-bg-light-color: #0f2438;
+  --left-menu-bg-light-color: #101928;
 
-  --left-menu-bg-active-color: var(--el-color-primary);
+  --left-menu-bg-active-color: #182846;
 
-  --left-menu-text-color: #bfcbd9;
+  --left-menu-text-color: var(--app-text-secondary);
 
-  --left-menu-text-active-color: #fff;
+  --left-menu-text-active-color: var(--app-text);
 
-  --left-menu-collapse-bg-active-color: var(--el-color-primary);
+  --left-menu-collapse-bg-active-color: #1b3159;
   /* left menu end */
 
   /* logo start */
   --logo-height: 50px;
 
-  --logo-title-text-color: #fff;
+  --logo-title-text-color: var(--app-text);
   /* logo end */
 
   /* header start */
-  --top-header-bg-color: '#fff';
+  --top-header-bg-color: #0c1320;
 
-  --top-header-text-color: 'inherit';
+  --top-header-text-color: var(--app-text);
 
-  --top-header-hover-color: #f6f6f6;
+  --top-header-hover-color: #172235;
 
   --top-tool-height: var(--logo-height);
 
@@ -48,7 +90,7 @@
 
   --app-content-padding: 20px;
 
-  --app-content-bg-color: #f5f7f9;
+  --app-content-bg-color: var(--app-bg);
 
   --app-footer-height: 50px;
 
@@ -56,11 +98,14 @@
 }
 
 .dark {
-  --app-content-bg-color: var(--el-bg-color);
+  --app-content-bg-color: var(--app-bg);
 }
 
 html,
 body {
+  color: var(--app-text);
+  background: var(--app-bg);
+  font-family: var(--app-body-font);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

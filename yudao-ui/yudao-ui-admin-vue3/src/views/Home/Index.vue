@@ -75,42 +75,47 @@ defineOptions({ name: 'Index' })
 
 const { t } = useI18n()
 
+const themeColor = (name: string, fallback: string) => {
+  if (typeof window === 'undefined') return fallback
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback
+}
+
 const metrics = computed(() => [
   {
     name: t('aiStudy.home.studentTotal'),
     value: 2846,
     icon: 'ep:school',
-    color: '#0f766e',
-    bg: 'rgba(15, 118, 110, 0.12)'
+    color: 'var(--app-success)',
+    bg: 'var(--app-success-soft)'
   },
   {
     name: t('aiStudy.home.todayRecords'),
     value: 126,
     icon: 'ep:reading',
-    color: '#2563eb',
-    bg: 'rgba(37, 99, 235, 0.12)'
+    color: 'var(--app-primary)',
+    bg: 'var(--app-primary-soft)'
   },
   {
     name: t('aiStudy.home.aiChats'),
     value: 482,
     icon: 'tabler:brain',
-    color: '#7c3aed',
-    bg: 'rgba(124, 58, 237, 0.12)'
+    color: 'var(--app-accent)',
+    bg: 'var(--app-accent-soft)'
   },
   {
     name: t('aiStudy.home.resumeDiagnosis'),
     value: 78,
     icon: 'ep:document-checked',
-    color: '#059669',
-    bg: 'rgba(5, 150, 105, 0.12)'
+    color: 'var(--app-success)',
+    bg: 'var(--app-success-soft)'
   },
   {
     name: t('aiStudy.home.skillCompletion'),
     value: 68,
     suffix: '%',
     icon: 'ep:trend-charts',
-    color: '#f59e0b',
-    bg: 'rgba(245, 158, 11, 0.14)'
+    color: 'var(--app-warning)',
+    bg: 'rgb(255 209 102 / 14%)'
   }
 ])
 
@@ -142,8 +147,8 @@ const studyTrendOptions = computed<EChartsOption>(() => ({
       smooth: true,
       data: [120, 150, 132, 178, 210, 186, 225],
       areaStyle: { opacity: 0.16 },
-      lineStyle: { width: 3, color: '#2563eb' },
-      itemStyle: { color: '#2563eb' }
+      lineStyle: { width: 3, color: themeColor('--app-primary', '#7aa2ff') },
+      itemStyle: { color: themeColor('--app-primary', '#7aa2ff') }
     }
   ]
 }))
@@ -195,13 +200,13 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
       name: t('aiStudy.home.aiChats'),
       type: 'bar',
       data: [86, 102, 118, 125],
-      itemStyle: { color: '#7c3aed' }
+      itemStyle: { color: themeColor('--app-primary', '#7aa2ff') }
     },
     {
       name: t('aiStudy.home.resumeDiagnosis'),
       type: 'bar',
       data: [24, 32, 28, 34],
-      itemStyle: { color: '#059669' }
+      itemStyle: { color: themeColor('--app-accent', '#ffb7dc') }
     }
   ]
 }))
@@ -215,7 +220,14 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
 
 .ai-home__hero {
   background:
-    linear-gradient(135deg, rgb(37 99 235 / 12%), rgb(124 58 237 / 8%)), var(--el-bg-color);
+    linear-gradient(135deg, rgb(122 162 255 / 16%), rgb(255 183 220 / 10%)),
+    linear-gradient(90deg, rgb(255 255 255 / 4%) 1px, transparent 1px),
+    linear-gradient(rgb(255 255 255 / 4%) 1px, transparent 1px), var(--app-card-bg);
+  background-size:
+    auto,
+    18px 18px,
+    18px 18px;
+  border-color: var(--app-border-strong);
 }
 
 .ai-home__hero-main {
@@ -230,7 +242,10 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
     font-size: calc(var(--app-title-font-size) + 10px);
     font-weight: 700;
     line-height: 1.3;
-    color: var(--el-text-color-primary);
+    color: var(--app-text);
+    text-shadow:
+      3px 3px 0 rgb(0 0 0 / 55%),
+      0 0 18px rgb(122 162 255 / 18%);
   }
 
   p {
@@ -243,7 +258,8 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
 .ai-home__eyebrow {
   font-size: var(--app-font-size-small);
   font-weight: 600;
-  color: var(--el-color-primary);
+  color: var(--app-accent);
+  text-shadow: var(--app-pixel-shadow);
 }
 
 .ai-home__metric {
@@ -263,6 +279,8 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
   align-items: center;
   justify-content: center;
   border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+  image-rendering: pixelated;
 }
 
 .ai-home__metric-label {
@@ -274,6 +292,7 @@ const aiSupportOptions = computed<EChartsOption>(() => ({
   margin-top: 6px;
   font-size: calc(var(--app-title-font-size) + 6px);
   font-weight: 700;
-  color: var(--el-text-color-primary);
+  color: var(--app-text);
+  text-shadow: var(--app-pixel-shadow);
 }
 </style>

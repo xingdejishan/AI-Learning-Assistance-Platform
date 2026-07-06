@@ -235,14 +235,21 @@ onMounted(() => {
 .chat-answer {
   min-height: 260px;
   padding: 16px;
-  background: var(--el-fill-color-blank);
-  border: 1px solid var(--el-border-color);
-  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgb(122 162 255 / 4%) 1px, transparent 1px),
+    linear-gradient(rgb(122 162 255 / 4%) 1px, transparent 1px), var(--app-card-bg);
+  background-size: 18px 18px;
+  border: 1px solid var(--app-border);
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px rgb(255 183 220 / 6%);
 }
 
 .chat-question {
+  font-family: var(--app-pixel-font);
   font-size: var(--app-font-size-base);
   font-weight: 600;
+  color: var(--app-accent);
+  text-shadow: var(--app-pixel-shadow);
 }
 
 .answer-text {
@@ -251,9 +258,10 @@ onMounted(() => {
 }
 
 .history-question {
+  font-family: var(--app-pixel-font);
   font-size: var(--app-font-size-base);
   font-weight: 600;
-  color: var(--el-text-color-primary);
+  color: var(--app-text);
 }
 
 .history-answer {
